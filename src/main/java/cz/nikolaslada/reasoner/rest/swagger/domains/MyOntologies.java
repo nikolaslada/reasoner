@@ -3,10 +3,10 @@ package cz.nikolaslada.reasoner.rest.swagger.domains;
 import java.util.List;
 
 public class MyOntologies {
-    int offset;
-    int count;
-    int totalCount;
-    List<MyOntologyItem> ontologyList;
+    private int offset;
+    private int count;
+    private int totalCount;
+    private List<MyOntologyItem> ontologyList;
 
     public MyOntologies(int offset, int count, int totalCount, List<MyOntologyItem> ontologyList) {
         super();

@@ -1,11 +1,11 @@
 package cz.nikolaslada.reasoner.rest.swagger.domains;
 
 public class OntologyDetail {
-    int id;
-    String name;
-    int classCount;
-    int propertyCount;
-    int individualCount;
+    private int id;
+    private String name;
+    private int classCount;
+    private int propertyCount;
+    private int individualCount;
 
     public OntologyDetail(int id, String name, int classCount, int propertyCount, int individualCount) {
         super();
