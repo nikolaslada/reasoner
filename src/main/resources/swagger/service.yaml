@@ -591,9 +591,7 @@ components:
           type: integer
           format: int32
         tree:
-          type: array
-          items:
-            $ref: '#/components/schemas/ClassTreeNode'
+          $ref: '#/components/schemas/ClassTreeNode'
     ClassTreeNode:
       title: ClassTree
       required:
