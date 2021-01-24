@@ -15,7 +15,7 @@ public class PropertyValidatorTest {
 
     @DisplayName("Property name validation test")
     @Test
-    void isNameValidTest() {
+    void isNameValidTest() throws Exception {
         assertTrue(p.isNameValid("property13"));
         assertTrue(p.isNameValid("property_Name"));
         assertTrue(p.isNameValid("a"));
@@ -38,7 +38,17 @@ public class PropertyValidatorTest {
         assertFalse(p.isNameValid("p<"));
         assertFalse(p.isNameValid("p>"));
         assertFalse(p.isNameValid("p;"));
-        assertFalse(p.isNameValid("psds5pBHwOFZwnCzbBvw56KITQDjTRuapanzVlPS0McdxlEeL1ShXyX7QlXjTU8G7WY4LdUk4jFok2A7vqxAYZrzB8uwYIx56iOrDrVHV7aoUj3D7YXmMHT9MSt3OuA9qXjEC8GbigDpyw6F1Udy3SPO1a5r1RLDrUgLhftsADicgWAXUcIYkpCyNzhxt7E2kYMR80Ch3EqL7tRIndchgpkRm6vEIRRrxvAmpU3ehvedxdfpzw5pBfSyxnVdBMQO"));
+    }
+
+    @DisplayName("Property name validation test, thrown exception")
+    @Test
+    void isNameValidExceptionTest() {
+        Exception e = assertThrows(
+                Exception.class,
+                () -> p.isNameValid("psds5pBHwOFZwnCzbBvw56KITQDjTRuapanzVlPS0McdxlEeL1ShXyX7QlXjTU8G7WY4LdUk4jFok2A7vqxAYZrzB8uwYIx56iOrDrVHV7aoUj3D7YXmMHT9MSt3OuA9qXjEC8GbigDpyw6F1Udy3SPO1a5r1RLDrUgLhftsADicgWAXUcIYkpCyNzhxt7E2kYMR80Ch3EqL7tRIndchgpkRm6vEIRRrxvAmpU3ehvedxdfpzw5pBfSyxnVdBMQO"),
+                "Expected isNameValid() to throw"
+        );
+        assertTrue(e.getMessage().contains("Length of property name must not be greater than 255! Current length is 256"));
     }
 
     @DisplayName("Property get Restriction test")
