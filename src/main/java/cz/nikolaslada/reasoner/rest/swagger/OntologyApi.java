@@ -4,6 +4,7 @@ import cz.nikolaslada.reasoner.repository.model.Ontology;
 import cz.nikolaslada.reasoner.rest.swagger.domains.OntologyDetail;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewOntology;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
+import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
 import cz.nikolaslada.reasoner.services.OntologyService;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,14 +17,16 @@ public class OntologyApi {
         this.service = service;
     }
 
+
     @GetMapping("/ontology/{id}")
-    public OntologyDetail getOntology(@PathVariable int id) {
+    public OntologyDetail getOntology(@PathVariable int id) throws NotFoundException {
+        Ontology o = this.service.getById(id);
         return new OntologyDetail(
-                1,
-                "Test ontology #1",
-                256,
-                32,
-                0
+                o.getId(),
+                o.getName(),
+                o.getClassCount(),
+                o.getPropertyCount(),
+                o.getIndividualCount()
         );
     }
 

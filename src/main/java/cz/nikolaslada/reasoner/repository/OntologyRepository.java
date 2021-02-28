@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OntologyRepository extends MongoRepository<Ontology, String> {
 
+    Ontology findOntologyById(Integer id);
     Boolean existsByName(String name);
     Boolean deleteOntologyById(String id);
 
