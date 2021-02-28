@@ -1,5 +1,6 @@
 package cz.nikolaslada.reasoner.rest.swagger;
 
+import cz.nikolaslada.reasoner.mappers.OntologyMapper;
 import cz.nikolaslada.reasoner.repository.model.Ontology;
 import cz.nikolaslada.reasoner.rest.swagger.domains.OntologyDetail;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewOntology;
@@ -20,14 +21,8 @@ public class OntologyApi {
 
     @GetMapping("/ontology/{id}")
     public OntologyDetail getOntology(@PathVariable int id) throws NotFoundException {
-        Ontology o = this.service.getById(id);
-        return new OntologyDetail(
-                o.getId(),
-                o.getName(),
-                o.getClassCount(),
-                o.getPropertyCount(),
-                o.getIndividualCount()
-        );
+        Ontology ontology = this.service.getById(id);
+        return OntologyMapper.INSTANCE.OntologyModelToOntologyDetail(ontology);
     }
 
     @PostMapping(
