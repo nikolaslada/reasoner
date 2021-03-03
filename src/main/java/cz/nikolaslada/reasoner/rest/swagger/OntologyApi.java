@@ -22,7 +22,7 @@ public class OntologyApi {
     @GetMapping("/ontology/{id}")
     public OntologyDetail getOntology(@PathVariable int id) throws NotFoundException {
         Ontology ontology = this.service.getById(id);
-        return OntologyMapper.INSTANCE.OntologyModelToOntologyDetail(ontology);
+        return OntologyMapper.INSTANCE.ontologyModelToOntologyDetail(ontology);
     }
 
     @PostMapping(

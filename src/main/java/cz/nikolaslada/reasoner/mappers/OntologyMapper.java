@@ -10,6 +10,6 @@ public interface OntologyMapper {
 
     OntologyMapper INSTANCE = Mappers.getMapper(OntologyMapper.class);
 
-    OntologyDetail OntologyModelToOntologyDetail(Ontology ontology);
+    OntologyDetail ontologyModelToOntologyDetail(Ontology ontology);
 
 }
