@@ -31,7 +31,7 @@ public class OntologyApi {
             consumes = { "application/json" }
     )
     public Ontology post(@RequestBody NewOntology request) throws ErrorException {
-        return this.service.save(request);
+        return this.service.create(request);
     }
 
 }

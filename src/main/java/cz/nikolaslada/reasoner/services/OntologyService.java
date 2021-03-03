@@ -30,7 +30,7 @@ public class OntologyService {
 
 
     public Ontology getById(Integer id) throws NotFoundException {
-        Ontology ontology = this.ontologyRepository.findOntologyById(id);
+        Ontology ontology = this.ontologyRepository.findById(id);
 
         if (ontology == null) {
             throw new NotFoundException(
@@ -49,7 +49,7 @@ public class OntologyService {
         }
     }
 
-    public Ontology save(NewOntology request) throws ErrorException {
+    public Ontology create(NewOntology request) throws ErrorException {
         if (this.ontologyRepository.existsByName(request.getName())) {
             throw new ConflictException(
                     CONFLICT_MESSAGE,
@@ -78,8 +78,8 @@ public class OntologyService {
         );
     }
 
-    public Boolean deleteOntology(String id) {
-        return this.ontologyRepository.deleteOntologyById(id);
+    public Boolean delete(String id) {
+        return this.ontologyRepository.deleteById(id);
     }
 
 }
