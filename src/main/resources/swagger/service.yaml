@@ -5,7 +5,7 @@ info:
   description: Reasoner is engine for OntoWeb project. It provides Rest API for back-office application and for client queries.
   license:
     name: © Nikolas Lada
-  version: 1.0.0-oas3
+  version: 0.1.0-oas3
 servers:
 - url: /
 paths:
@@ -408,6 +408,112 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /user:
+    post:
+      summary: Create a User
+      description: Creates a new User.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUserRequest'
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailResponse'
+        "400":
+          description: HTTP Client Error 4xx
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user/{userId}:
+    get:
+      summary: Get the User Detail
+      parameters:
+      - name: userId
+        in: path
+        description: Numeric ID of the User.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailResponse'
+        "400":
+          description: HTTP Client Error 4xx
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "404":
+          description: HTTP Client Error 4xx
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete the User
+      parameters:
+      - name: userId
+        in: path
+        description: Numeric ID of the User.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: No Content
+        "410":
+          description: HTTP Client Error 4xx
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: Partially update the User
+      parameters:
+      - name: userId
+        in: path
+        description: Numeric ID of the User.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDetailResponse'
+        required: true
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: HTTP Client Error 4xx
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "410":
+          description: HTTP Client Error 4xx
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     Error:
@@ -424,7 +530,6 @@ components:
         timestamp:
           type: string
           format: date-time
-          example: 2020-01-13T12:00:00Z
         messageList:
           type: array
           description: List of error codes and error messages.
@@ -432,7 +537,7 @@ components:
             $ref: '#/components/schemas/ErrorMessage'
       example:
         code: 400
-        timestamp: 2020-01-13T12:00:00Z
+        timestamp: 2020-01-13T12:00:00.000+0000
         messageList:
         - code: notValidClass
           message: Class is not valid!
@@ -854,6 +959,51 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ClassTree'
+    NewUserRequest:
+      title: NewUserRequest
+      type: object
+      properties:
+        firstName:
+          type: string
+        surname:
+          type: string
+        login:
+          type: string
+        password:
+          type: string
+    UserDetailResponse:
+      title: UserDetailResponse
+      required:
+      - createdAt
+      - firstName
+      - login
+      - surname
+      - updatedAt
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        login:
+          type: string
+        firstName:
+          type: string
+        surname:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    UserUpdateRequest:
+      title: UserUpdateRequest
+      type: object
+      properties:
+        firstName:
+          type: string
+        surname:
+          type: string
+        password:
+          type: string
   responses:
     ClientError:
       description: HTTP Client Error 4xx
