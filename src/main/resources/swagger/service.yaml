@@ -5,7 +5,7 @@ info:
   description: Reasoner is engine for OntoWeb project. It provides Rest API for back-office application and for client queries.
   license:
     name: © Nikolas Lada
-  version: 0.1.0-oas3
+  version: 0.2.1-oas3
 servers:
 - url: /
 paths:
@@ -431,18 +431,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /user/{userId}:
+  /user/{by}/{value}:
     get:
-      summary: Get the User Detail
+      summary: Get the User Detail by id or login.
       parameters:
-      - name: userId
+      - name: by
         in: path
-        description: Numeric ID of the User.
+        description: id|login
         required: true
         style: simple
         explode: false
         schema:
-          type: integer
+          type: string
+      - name: value
+        in: path
+        description: Numeric id or login.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
       responses:
         "200":
           description: OK
@@ -462,6 +470,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /user/{userId}:
     delete:
       summary: Delete the User
       parameters:
@@ -497,11 +506,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserDetailResponse'
+              $ref: '#/components/schemas/UserUpdateRequest'
         required: true
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailResponse'
         "400":
           description: HTTP Client Error 4xx
           content:
@@ -530,6 +543,7 @@ components:
         timestamp:
           type: string
           format: date-time
+          example: 2020-01-13T12:00:00Z
         messageList:
           type: array
           description: List of error codes and error messages.
@@ -537,7 +551,7 @@ components:
             $ref: '#/components/schemas/ErrorMessage'
       example:
         code: 400
-        timestamp: 2020-01-13T12:00:00.000+0000
+        timestamp: 2020-01-13T12:00:00.000Z
         messageList:
         - code: notValidClass
           message: Class is not valid!
