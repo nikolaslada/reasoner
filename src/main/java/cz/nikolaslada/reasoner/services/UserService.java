@@ -7,6 +7,7 @@ import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewUser;
 import cz.nikolaslada.reasoner.rest.swagger.domains.response.UserDetail;
 import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
+import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class UserService {
     private static final String CONFLICT_MESSAGE = "There is User with same login: ";
     private static final String NOT_FOUND_MESSAGE_BY_ID = "There is no User with ID: ";
     private static final String NOT_FOUND_MESSAGE_BY_LOGIN = "There is no User with Login: ";
+    private static final String GONE_MESSAGE = "Cannot to remove User. There is no User with ID: ";
 
     private final UserRepository userRepository;
     private final SequenceService sequenceService;
@@ -97,6 +99,24 @@ public class UserService {
         );
 
         return UserMapper.INSTANCE.userModelToUserDetail(user);
+    }
+
+    public void delete(Integer id) {
+        if (!this.userRepository.existsById(id)) {
+            throw new GoneException(
+                    GONE_MESSAGE,
+                    Arrays.asList(
+                            new ErrorItem(
+                                    GONE_MESSAGE,
+                                    Arrays.asList(
+                                            id.toString()
+                                    )
+                            )
+                    )
+            );
+        } else {
+            this.userRepository.deleteById(id);
+        }
     }
 
 }

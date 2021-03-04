@@ -6,6 +6,7 @@ import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
+import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
 import cz.nikolaslada.reasoner.services.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class UserApi {
 
     private static final String BY_ID = "id";
     private static final String BY_LOGIN = "login";
-    private static final String BAD_REQUEST_UNSUPPORTED_BY = "Not supported to get user by: ";
+    private static final String BAD_REQUEST_UNSUPPORTED_BY_MESSAGE = "Not supported to get user by: ";
 
     private final UserService service;
 
@@ -35,10 +36,10 @@ public class UserApi {
             return this.service.getByLogin(value);
         } else {
             throw new BadRequestException(
-                    BAD_REQUEST_UNSUPPORTED_BY,
+                    BAD_REQUEST_UNSUPPORTED_BY_MESSAGE,
                     Arrays.asList(
                             new ErrorItem(
-                                    BAD_REQUEST_UNSUPPORTED_BY,
+                                    BAD_REQUEST_UNSUPPORTED_BY_MESSAGE,
                                     Arrays.asList(
                                             by
                                     )
@@ -55,6 +56,11 @@ public class UserApi {
     )
     public UserDetail post(@RequestBody NewUser request) throws ConflictException {
         return this.service.create(request);
+    }
+
+    @DeleteMapping("/user/{id}")
+    public void delete(@PathVariable int id) throws GoneException {
+        this.service.delete(id);
     }
 
 }
