@@ -5,6 +5,7 @@ import cz.nikolaslada.reasoner.repository.model.Ontology;
 import cz.nikolaslada.reasoner.rest.swagger.domains.OntologyDetail;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewOntology;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
+import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
 import cz.nikolaslada.reasoner.services.OntologyService;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,11 @@ public class OntologyApi {
     )
     public Ontology post(@RequestBody NewOntology request) throws ErrorException {
         return this.service.create(request);
+    }
+
+    @DeleteMapping("/ontology/{id}")
+    public void delete(@PathVariable int id) throws GoneException {
+        this.service.delete(id);
     }
 
 }

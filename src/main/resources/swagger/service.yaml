@@ -5,7 +5,7 @@ info:
   description: Reasoner is engine for OntoWeb project. It provides Rest API for back-office application and for client queries.
   license:
     name: © Nikolas Lada
-  version: 0.2.1-oas3
+  version: 0.3.0-oas3
 servers:
 - url: /
 paths:
@@ -121,6 +121,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/OntologyDetail'
         "404":
+          description: HTTP Client Error 4xx
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete the Ontology
+      parameters:
+      - name: ontologyId
+        in: path
+        description: Numeric ID of the Ontology.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: No Content
+        "410":
           description: HTTP Client Error 4xx
           content:
             application/json:

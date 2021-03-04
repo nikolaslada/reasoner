@@ -6,6 +6,7 @@ import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewOntology;
 import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
+import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
 import cz.nikolaslada.reasoner.validators.IsoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 public class OntologyService {
 
     private static final String CONFLICT_MESSAGE = "There is Ontology with same name: ";
+    private static final String GONE_MESSAGE = "Cannot to remove Ontology. There is no Ontology with ID: ";
     private static final String NOT_FOUND_MESSAGE = "There is no Ontology with ID: ";
 
     @Autowired
@@ -78,8 +80,22 @@ public class OntologyService {
         );
     }
 
-    public Boolean delete(String id) {
-        return this.ontologyRepository.deleteById(id);
+    public void delete(Integer id) {
+        if (!this.ontologyRepository.existsById(id)) {
+            throw new GoneException(
+                    GONE_MESSAGE,
+                    Arrays.asList(
+                            new ErrorItem(
+                                    GONE_MESSAGE,
+                                    Arrays.asList(
+                                            id.toString()
+                                    )
+                            )
+                    )
+            );
+        } else {
+            this.ontologyRepository.deleteById(id);
+        }
     }
 
 }
