@@ -8,6 +8,8 @@ import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
 import cz.nikolaslada.reasoner.services.OntologyService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -36,8 +38,9 @@ public class OntologyApi {
     }
 
     @DeleteMapping("/ontology/{id}")
-    public void delete(@PathVariable int id) throws GoneException {
+    public ResponseEntity<Void> delete(@PathVariable int id) throws GoneException {
         this.service.delete(id);
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
 }

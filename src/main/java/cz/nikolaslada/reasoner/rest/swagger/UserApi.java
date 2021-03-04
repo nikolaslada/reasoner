@@ -8,6 +8,8 @@ import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
 import cz.nikolaslada.reasoner.services.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -59,8 +61,9 @@ public class UserApi {
     }
 
     @DeleteMapping("/user/{id}")
-    public void delete(@PathVariable int id) throws GoneException {
+    public ResponseEntity<Void> delete(@PathVariable int id) throws GoneException {
         this.service.delete(id);
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
 }
