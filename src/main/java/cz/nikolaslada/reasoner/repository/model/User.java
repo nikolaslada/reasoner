@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @Getter
 @Document(collection = "users")
@@ -19,11 +19,11 @@ public class User {
     private String hash;
     private String firstName;
     private String surname;
-    private Date createdAt;
-    private Date updatedAt;
+    private ZonedDateTime createdAt;
+    private ZonedDateTime updatedAt;
 
 
-    public User(Integer id, String login, String hash, String firstName, String surname, Date createdAt, Date updatedAt) {
+    public User(Integer id, String login, String hash, String firstName, String surname, ZonedDateTime createdAt, ZonedDateTime updatedAt) {
         this.id = id;
         this.login = login;
         this.hash = hash;

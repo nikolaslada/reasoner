@@ -11,6 +11,8 @@ import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -93,7 +95,7 @@ public class UserService {
                         "",
                         request.getFirstName(),
                         request.getSurname(),
-                        new Date(),
+                        ZonedDateTime.now(ZoneOffset.UTC),
                         null
                 )
         );
