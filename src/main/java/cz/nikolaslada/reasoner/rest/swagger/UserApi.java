@@ -1,6 +1,7 @@
 package cz.nikolaslada.reasoner.rest.swagger;
 
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewUser;
+import cz.nikolaslada.reasoner.rest.swagger.domains.request.UpdateUser;
 import cz.nikolaslada.reasoner.rest.swagger.domains.response.UserDetail;
 import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
@@ -64,6 +65,15 @@ public class UserApi {
     public ResponseEntity<Void> delete(@PathVariable int id) throws GoneException {
         this.service.delete(id);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping(
+            value = "/user/{id}",
+            produces = { "application/json" },
+            consumes = { "application/json" }
+    )
+    public UserDetail patch(@PathVariable Integer id, @RequestBody UpdateUser request) throws GoneException {
+        return this.service.patch(id, request);
     }
 
 }

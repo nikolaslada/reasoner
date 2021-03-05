@@ -4,6 +4,7 @@ import cz.nikolaslada.reasoner.mappers.UserMapper;
 import cz.nikolaslada.reasoner.repository.UserRepository;
 import cz.nikolaslada.reasoner.repository.model.User;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewUser;
+import cz.nikolaslada.reasoner.rest.swagger.domains.request.UpdateUser;
 import cz.nikolaslada.reasoner.rest.swagger.domains.response.UserDetail;
 import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
@@ -119,6 +120,37 @@ public class UserService {
         } else {
             this.userRepository.deleteById(id);
         }
+    }
+
+    public UserDetail patch(Integer id, UpdateUser r) throws GoneException {
+        User user = this.userRepository.findById(id);
+        if (user == null) {
+            throw new GoneException(
+                    GONE_MESSAGE,
+                    Arrays.asList(
+                            new ErrorItem(
+                                    GONE_MESSAGE,
+                                    Arrays.asList(
+                                            id.toString()
+                                    )
+                            )
+                    )
+            );
+        }
+
+        User patchedUser = this.userRepository.save(
+                new User(
+                        user.getId(),
+                        user.getLogin(),
+                        "",
+                        (r.getFirstName() == null || r.getFirstName().isEmpty()) ? user.getFirstName() : r.getFirstName(),
+                        (r.getSurname() == null || r.getSurname().isEmpty()) ? user.getSurname() : r.getSurname(),
+                        user.getCreatedAt(),
+                        ZonedDateTime.now(ZoneOffset.UTC)
+                )
+        );
+
+        return UserMapper.INSTANCE.userModelToUserDetail(patchedUser);
     }
 
 }
