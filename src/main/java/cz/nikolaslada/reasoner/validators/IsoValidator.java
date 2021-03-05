@@ -1,6 +1,6 @@
 package cz.nikolaslada.reasoner.validators;
 
-import cz.nikolaslada.reasoner.rest.swagger.domains.request.Translation;
+import cz.nikolaslada.reasoner.rest.swagger.domains.Translation;
 import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
 import org.springframework.stereotype.Component;
