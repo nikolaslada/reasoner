@@ -1,5 +1,6 @@
 package cz.nikolaslada.reasoner.services;
 
+import cz.nikolaslada.reasoner.factories.TranslationFactory;
 import cz.nikolaslada.reasoner.repository.model.Ontology;
 import cz.nikolaslada.reasoner.repository.OntologyRepository;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewOntology;
@@ -8,8 +9,6 @@ import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
-import cz.nikolaslada.reasoner.validators.IsoValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -17,19 +16,24 @@ import java.util.Arrays;
 @Service
 public class OntologyService {
 
-    private static final String CONFLICT_MESSAGE = "There is Ontology with same name: ";
+    private static final String CONFLICT_MESSAGE_BY_NAME = "There is Ontology with same name: ";
     private static final String GONE_MESSAGE = "Cannot to remove Ontology. There is no Ontology with ID: ";
     private static final String NOT_FOUND_MESSAGE = "There is no Ontology with ID: ";
 
-    @Autowired
-    private OntologyRepository ontologyRepository;
+    private final OntologyRepository ontologyRepository;
+    private final SequenceService sequenceService;
+    private final TranslationFactory translationFactory;
 
-    @Autowired
-    private SequenceService sequenceService;
 
-    @Autowired
-    private IsoValidator isoValidator;
-
+    public OntologyService(
+            OntologyRepository ontologyRepository,
+            SequenceService sequenceService,
+            TranslationFactory translationFactory
+    ) {
+        this.ontologyRepository = ontologyRepository;
+        this.sequenceService = sequenceService;
+        this.translationFactory = translationFactory;
+    }
 
     public Ontology getById(Integer id) throws NotFoundException {
         Ontology ontology = this.ontologyRepository.findById(id);
@@ -54,10 +58,10 @@ public class OntologyService {
     public Ontology create(NewOntology request) throws ErrorException {
         if (this.ontologyRepository.existsByName(request.getName())) {
             throw new ConflictException(
-                    CONFLICT_MESSAGE,
+                    CONFLICT_MESSAGE_BY_NAME,
                     Arrays.asList(
                             new ErrorItem(
-                                    CONFLICT_MESSAGE,
+                                    CONFLICT_MESSAGE_BY_NAME,
                                     Arrays.asList(
                                             request.getName()
                                     )
@@ -66,12 +70,11 @@ public class OntologyService {
             );
         }
 
-        this.isoValidator.checkIsoList(request.getTranslationList());
         return this.ontologyRepository.save(
                 new Ontology(
                     this.sequenceService.getNewSequence(Ontology.SEQUENCE_NAME, 1).getSeq(),
                     request.getName(),
-                    request.getTranslationList(),
+                    this.translationFactory.createModelList(request.getTranslationList()),
                     // owner
                     null,
                     null,
@@ -80,7 +83,7 @@ public class OntologyService {
         );
     }
 
-    public void delete(Integer id) {
+    public void delete(Integer id) throws ErrorException {
         if (!this.ontologyRepository.existsById(id)) {
             throw new GoneException(
                     GONE_MESSAGE,
@@ -93,9 +96,9 @@ public class OntologyService {
                             )
                     )
             );
-        } else {
-            this.ontologyRepository.deleteById(id);
         }
+
+        this.ontologyRepository.deleteById(id);
     }
 
 }

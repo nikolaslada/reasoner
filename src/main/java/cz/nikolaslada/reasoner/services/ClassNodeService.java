@@ -7,8 +7,6 @@ import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
-import cz.nikolaslada.reasoner.validators.IsoValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
@@ -21,15 +19,17 @@ public class ClassNodeService {
     private static final String CONFLICT_MESSAGE = "There is Class node with same name: ";
     private static final String NOT_FOUND_MESSAGE = "There is no Class node with ID: ";
 
-    @Autowired
     private ClassNodeRepository classNodeRepository;
-
-    @Autowired
     private SequenceService sequenceService;
 
-    @Autowired
-    private IsoValidator isoValidator;
 
+    public ClassNodeService(
+            ClassNodeRepository classNodeRepository,
+            SequenceService sequenceService
+    ) {
+        this.classNodeRepository = classNodeRepository;
+        this.sequenceService = sequenceService;
+    }
 
     public ClassNode getById(Integer id) throws NotFoundException {
         ClassNode classNode = this.classNodeRepository.findById(id);
@@ -66,7 +66,6 @@ public class ClassNodeService {
             );
         }
 
-        this.isoValidator.checkIsoList(request.getTranslationList());
         return this.classNodeRepository.save(
                 new ClassNode(
                     this.sequenceService.getNewSequence(ClassNode.SEQUENCE_NAME, 1).getSeq(),

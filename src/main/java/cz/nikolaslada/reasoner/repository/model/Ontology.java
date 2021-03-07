@@ -1,7 +1,6 @@
 package cz.nikolaslada.reasoner.repository.model;
 
 import com.mongodb.lang.Nullable;
-import cz.nikolaslada.reasoner.rest.swagger.domains.request.Translation;
 import lombok.Getter;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
@@ -18,7 +17,7 @@ public class Ontology {
     private Integer id;
 
     private String name;
-    private List<Translation> translations;
+    private List<TranslationModel> translations;
     @Nullable
     private Integer classCount;
     @Nullable
@@ -30,7 +29,7 @@ public class Ontology {
     public Ontology(
             Integer id,
             String name,
-            List<Translation> translations,
+            List<TranslationModel> translations,
             Integer classCount,
             Integer propertyCount,
             Integer individualCount
