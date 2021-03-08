@@ -1,5 +1,6 @@
 package cz.nikolaslada.reasoner.validators;
 
+import static cz.nikolaslada.reasoner.repository.identifiers.RestrictionId.*;
 import static cz.nikolaslada.reasoner.rest.swagger.identifiers.RestrictionId.*;
 
 import cz.nikolaslada.reasoner.domains.Restriction;
@@ -30,20 +31,24 @@ public class PropertyValidator {
         return NAME_PATTERN.matcher(name).matches();
     }
 
-    public Restriction getRestriction(char id) throws Exception {
+    public String getDbRestriction(String id) throws Exception {
+        if (id == null) {
+            return null;
+        }
+
         switch (id) {
-            case SOME:
-                return Restriction.SOME;
-            case ONLY:
-                return Restriction.ONLY;
-            case HAS_VALUE:
-                return Restriction.HAS_VALUE;
-            case MIN:
-                return Restriction.MIN;
-            case MAX:
-                return Restriction.MAX;
-            case EQUAL:
-                return Restriction.EQUAL;
+            case SOME_API:
+                return SOME_DB;
+            case ONLY_API:
+                return ONLY_DB;
+            case HAS_VALUE_API:
+                return HAS_VALUE_DB;
+            case MIN_API:
+                return MIN_DB;
+            case MAX_API:
+                return MAX_DB;
+            case EQUAL_API:
+                return EQUAL_DB;
             default:
                 throw new Exception(
                         String.format(
@@ -51,6 +56,25 @@ public class PropertyValidator {
                                 id
                         )
                 );
+        }
+    }
+
+    public String getApiRestriction(String id) throws Exception {
+        switch (id) {
+            case SOME_DB:
+                return SOME_API;
+            case ONLY_DB:
+                return ONLY_API;
+            case HAS_VALUE_DB:
+                return HAS_VALUE_API;
+            case MIN_DB:
+                return MIN_API;
+            case MAX_DB:
+                return MAX_API;
+            case EQUAL_DB:
+                return EQUAL_API;
+            default:
+                return null;
         }
     }
 

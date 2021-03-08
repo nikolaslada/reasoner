@@ -1,5 +1,6 @@
 package cz.nikolaslada.reasoner.validators;
 
+import static cz.nikolaslada.reasoner.repository.identifiers.RestrictionId.*;
 import static cz.nikolaslada.reasoner.rest.swagger.identifiers.RestrictionId.*;
 
 import cz.nikolaslada.reasoner.domains.Restriction;
@@ -51,31 +52,62 @@ public class PropertyValidatorTest {
         assertTrue(e.getMessage().contains("Length of property name must not be greater than 255! Current length is 256"));
     }
 
-    @DisplayName("Property get Restriction test")
+    @DisplayName("Property get Api Restriction test")
     @Test
-    void getRestrictionTest() throws Exception {
-        assertEquals(p.getRestriction('s'), Restriction.SOME);
-        assertEquals(p.getRestriction('o'), Restriction.ONLY);
-        assertEquals(p.getRestriction('v'), Restriction.HAS_VALUE);
-        assertEquals(p.getRestriction('i'), Restriction.MIN);
-        assertEquals(p.getRestriction('a'), Restriction.MAX);
-        assertEquals(p.getRestriction('e'), Restriction.EQUAL);
+    void getApiRestrictionTest() throws Exception {
+        assertEquals(p.getApiRestriction(null), null);
+        assertEquals(p.getApiRestriction("s"), SOME_API);
+        assertEquals(p.getApiRestriction("o"), ONLY_API);
+        assertEquals(p.getApiRestriction("v"), HAS_VALUE_API);
+        assertEquals(p.getApiRestriction("i"), MIN_API);
+        assertEquals(p.getApiRestriction("a"), MAX_API);
+        assertEquals(p.getApiRestriction("e"), EQUAL_API);
 
-        assertEquals(p.getRestriction(SOME), Restriction.SOME);
-        assertEquals(p.getRestriction(ONLY), Restriction.ONLY);
-        assertEquals(p.getRestriction(HAS_VALUE), Restriction.HAS_VALUE);
-        assertEquals(p.getRestriction(MIN), Restriction.MIN);
-        assertEquals(p.getRestriction(MAX), Restriction.MAX);
-        assertEquals(p.getRestriction(EQUAL), Restriction.EQUAL);
+        assertEquals(p.getApiRestriction(SOME_DB), SOME_API);
+        assertEquals(p.getApiRestriction(ONLY_DB), ONLY_API);
+        assertEquals(p.getApiRestriction(HAS_VALUE_DB), HAS_VALUE_API);
+        assertEquals(p.getApiRestriction(MIN_DB), MIN_API);
+        assertEquals(p.getApiRestriction(MAX_DB), MAX_API);
+        assertEquals(p.getApiRestriction(EQUAL_DB), EQUAL_API);
     }
 
-    @DisplayName("Property get Restriction test, thrown exception")
+    @DisplayName("Property get Api Restriction test, thrown exception")
+    @Test
+    void getApiRestrictionExceptionTest() {
+        Exception e = assertThrows(
+                Exception.class,
+                () -> p.getDbRestriction(" "),
+                "Expected getDbRestriction() to throw"
+        );
+        assertTrue(e.getMessage().contains("Not supported id of restriction ' '"));
+    }
+
+    @DisplayName("Property get DB Restriction test")
+    @Test
+    void getDbRestrictionTest() throws Exception {
+        assertEquals(p.getDbRestriction(null), null);
+        assertEquals(p.getDbRestriction("some"), SOME_DB);
+        assertEquals(p.getDbRestriction("only"), ONLY_DB);
+        assertEquals(p.getDbRestriction("hasValue"), HAS_VALUE_DB);
+        assertEquals(p.getDbRestriction("min"), MIN_DB);
+        assertEquals(p.getDbRestriction("max"), MAX_DB);
+        assertEquals(p.getDbRestriction("equal"), EQUAL_DB);
+
+        assertEquals(p.getDbRestriction(SOME_API), SOME_DB);
+        assertEquals(p.getDbRestriction(ONLY_API), ONLY_DB);
+        assertEquals(p.getDbRestriction(HAS_VALUE_API), HAS_VALUE_DB);
+        assertEquals(p.getDbRestriction(MIN_API), MIN_DB);
+        assertEquals(p.getDbRestriction(MAX_API), MAX_DB);
+        assertEquals(p.getDbRestriction(EQUAL_API), EQUAL_DB);
+    }
+
+    @DisplayName("Property get DB Restriction test, thrown exception")
     @Test
     void getRestrictionExceptionTest() {
         Exception e = assertThrows(
                 Exception.class,
-                () -> p.getRestriction(' '),
-                "Expected getRestriction() to throw"
+                () -> p.getDbRestriction(" "),
+                "Expected getDbRestriction() to throw"
         );
         assertTrue(e.getMessage().contains("Not supported id of restriction ' '"));
     }

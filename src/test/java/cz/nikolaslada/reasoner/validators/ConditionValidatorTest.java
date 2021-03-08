@@ -1,11 +1,9 @@
 package cz.nikolaslada.reasoner.validators;
 
-import cz.nikolaslada.reasoner.domains.ConditionType;
-import cz.nikolaslada.reasoner.domains.Operator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static cz.nikolaslada.reasoner.rest.swagger.identifiers.ConditionTypeId.*;
+import static cz.nikolaslada.reasoner.repository.identifiers.OperatorId.*;
 import static cz.nikolaslada.reasoner.rest.swagger.identifiers.OperatorId.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,48 +12,44 @@ public class ConditionValidatorTest {
 
     public ConditionValidator c = new ConditionValidator();
 
-    @DisplayName("Condition get ConditionType test")
+    @DisplayName("Condition get API Operator test")
     @Test
-    void getConditionTypeTest() throws Exception {
-        assertEquals(c.getConditionType('s'), ConditionType.SET);
-        assertEquals(c.getConditionType('c'), ConditionType.CLASS);
-        assertEquals(c.getConditionType('p'), ConditionType.PROPERTY);
-        assertEquals(c.getConditionType('n'), ConditionType.NOT);
+    void getApiOperatorTest() throws Exception {
+        assertEquals(c.getApiOperator("a"), AND_API);
+        assertEquals(c.getApiOperator("o"), OR_API);
 
-        assertEquals(c.getConditionType(SET), ConditionType.SET);
-        assertEquals(c.getConditionType(CLASS), ConditionType.CLASS);
-        assertEquals(c.getConditionType(PROPERTY), ConditionType.PROPERTY);
-        assertEquals(c.getConditionType(TYPE_NOT), ConditionType.NOT);
+        assertEquals(c.getApiOperator(AND_DB), AND_API);
+        assertEquals(c.getApiOperator(OR_DB), OR_API);
     }
 
-    @DisplayName("Condition get ConditionType test, thrown exception")
+    @DisplayName("Condition get API Operator test, thrown exception")
     @Test
-    void getRestrictionExceptionTest() {
+    void getApiOperatorExceptionTest() {
         Exception e = assertThrows(
                 Exception.class,
-                () -> c.getConditionType(' '),
-                "Expected getConditionType() to throw"
+                () -> c.getApiOperator(" "),
+                "Expected getApiOperator() to throw"
         );
-        assertTrue(e.getMessage().contains("Not supported id of condition type ' '."));
+        assertTrue(e.getMessage().contains("Not supported id of operator ' '."));
     }
 
-    @DisplayName("Condition get Operator test")
+    @DisplayName("Condition get DB Operator test")
     @Test
-    void getOperatorTest() throws Exception {
-        assertEquals(c.getOperator('a'), Operator.AND);
-        assertEquals(c.getOperator('o'), Operator.OR);
+    void getDbOperatorTest() throws Exception {
+        assertEquals(c.getDbOperator("and"), AND_DB);
+        assertEquals(c.getDbOperator("or"), OR_DB);
 
-        assertEquals(c.getOperator(AND), Operator.AND);
-        assertEquals(c.getOperator(OR), Operator.OR);
+        assertEquals(c.getDbOperator(AND_API), AND_DB);
+        assertEquals(c.getDbOperator(OR_API), OR_DB);
     }
 
-    @DisplayName("Condition get Operator test, thrown exception")
+    @DisplayName("Condition get DB Operator test, thrown exception")
     @Test
-    void getOperatorExceptionTest() {
+    void getDbOperatorExceptionTest() {
         Exception e = assertThrows(
                 Exception.class,
-                () -> c.getOperator(' '),
-                "Expected getOperator() to throw"
+                () -> c.getDbOperator(" "),
+                "Expected getDbOperator() to throw"
         );
         assertTrue(e.getMessage().contains("Not supported id of operator ' '."));
     }

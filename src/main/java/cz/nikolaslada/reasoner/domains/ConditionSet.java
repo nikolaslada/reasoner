@@ -6,10 +6,11 @@ import java.util.List;
 @Getter
 public class ConditionSet implements ConditionComposite {
 
-    private final Operator operator;
+    private final String operator;
     private final List<ConditionComposite> set;
 
-    public ConditionSet(Operator operator, List<ConditionComposite> set) {
+
+    public ConditionSet(String operator, List<ConditionComposite> set) {
         this.operator = operator;
         this.set = set;
     }

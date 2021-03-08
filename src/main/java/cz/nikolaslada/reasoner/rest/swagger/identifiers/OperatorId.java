@@ -1,6 +1,8 @@
 package cz.nikolaslada.reasoner.rest.swagger.identifiers;
 
 public class OperatorId {
-    public static final char AND = 'a';
-    public static final char OR = 'o';
+
+    public static final String AND_API = "and";
+    public static final String OR_API = "or";
+
 }

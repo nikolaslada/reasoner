@@ -1,10 +1,12 @@
 package cz.nikolaslada.reasoner.rest.swagger.identifiers;
 
 public class RestrictionId {
-    public static final char SOME = 's';
-    public static final char ONLY = 'o';
-    public static final char HAS_VALUE = 'v';
-    public static final char MIN = 'i';
-    public static final char MAX = 'a';
-    public static final char EQUAL = 'e';
+
+    public static final String SOME_API = "some";
+    public static final String ONLY_API = "only";
+    public static final String HAS_VALUE_API = "hasValue";
+    public static final String MIN_API = "min";
+    public static final String MAX_API = "max";
+    public static final String EQUAL_API = "equal";
+
 }
