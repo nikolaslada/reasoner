@@ -1,11 +1,15 @@
 package cz.nikolaslada.reasoner.services;
 
+import cz.nikolaslada.reasoner.domains.NameIdPairsDomain;
+import cz.nikolaslada.reasoner.factories.ConditionFactory;
+import cz.nikolaslada.reasoner.factories.DefinitionFactory;
+import cz.nikolaslada.reasoner.factories.LinkFactory;
+import cz.nikolaslada.reasoner.factories.TranslationFactory;
 import cz.nikolaslada.reasoner.repository.ClassNodeRepository;
-import cz.nikolaslada.reasoner.repository.model.ClassNode;
-import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewClassNode;
+import cz.nikolaslada.reasoner.repository.model.ClassNodeModel;
+import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewClassDomain;
 import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
-import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -19,22 +23,37 @@ public class ClassNodeService {
     private static final String CONFLICT_MESSAGE = "There is Class node with same name: ";
     private static final String NOT_FOUND_MESSAGE = "There is no Class node with ID: ";
 
-    private ClassNodeRepository classNodeRepository;
-    private SequenceService sequenceService;
+    private final ClassNodeRepository classNodeRepository;
+    private final SequenceService sequenceService;
+    private final DomainService domainService;
+    private final TranslationFactory translationFactory;
+    private final LinkFactory linkFactory;
+    private final DefinitionFactory definitionFactory;
+    private final ConditionFactory conditionFactory;
 
 
     public ClassNodeService(
             ClassNodeRepository classNodeRepository,
-            SequenceService sequenceService
+            SequenceService sequenceService,
+            DomainService domainService,
+            TranslationFactory translationFactory,
+            LinkFactory linkFactory,
+            DefinitionFactory definitionFactory,
+            ConditionFactory conditionFactory
     ) {
         this.classNodeRepository = classNodeRepository;
         this.sequenceService = sequenceService;
+        this.domainService = domainService;
+        this.translationFactory = translationFactory;
+        this.linkFactory = linkFactory;
+        this.definitionFactory = definitionFactory;
+        this.conditionFactory = conditionFactory;
     }
 
-    public ClassNode getById(Integer id) throws NotFoundException {
-        ClassNode classNode = this.classNodeRepository.findById(id);
+    public ClassNodeModel getById(Integer id) throws NotFoundException {
+        ClassNodeModel classNodeModel = this.classNodeRepository.findById(id);
 
-        if (classNode == null) {
+        if (classNodeModel == null) {
             throw new NotFoundException(
                     NOT_FOUND_MESSAGE,
                     Arrays.asList(
@@ -47,11 +66,11 @@ public class ClassNodeService {
                     )
             );
         } else {
-            return classNode;
+            return classNodeModel;
         }
     }
 
-    public ClassNode create(NewClassNode request) throws ErrorException {
+    public ClassNodeModel create(NewClassDomain request) throws Exception {
         if (this.classNodeRepository.existsByName(request.getName())) {
             throw new ConflictException(
                     CONFLICT_MESSAGE,
@@ -66,13 +85,25 @@ public class ClassNodeService {
             );
         }
 
+        NameIdPairsDomain nameIdPairs = this.domainService.getNameIdPairs(request.getOntologyId());
         return this.classNodeRepository.save(
-                new ClassNode(
-                    this.sequenceService.getNewSequence(ClassNode.SEQUENCE_NAME, 1).getSeq(),
+                new ClassNodeModel(
+                    this.sequenceService.getNewSequence(ClassNodeModel.SEQUENCE_NAME, 1).getSeq(),
+                    request.getOntologyId(),
                     request.getName(),
                     // owner
                     ZonedDateTime.now(ZoneOffset.UTC),
-                    null
+                    null,
+                    this.translationFactory.createModelList(request.getTranslationList()),
+                    this.linkFactory.createModel(request.getLinkDomain()),
+                    this.definitionFactory.createModelList(
+                            request.getDefinitionList(),
+                            nameIdPairs
+                    ),
+                    this.conditionFactory.createModel(
+                            request.getCondition(),
+                            nameIdPairs
+                    )
                 )
         );
     }

@@ -1,45 +1,37 @@
-package cz.nikolaslada.reasoner.rest.swagger.domains.response;
+package cz.nikolaslada.reasoner.rest.swagger.domains.request;
 
 import cz.nikolaslada.reasoner.rest.swagger.domains.ConditionDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.DefinitionDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.LinkDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.TranslationDomain;
 import lombok.Getter;
-
 import java.util.List;
 
 @Getter
-public class ClassDetail {
+public class NewClassDomain {
 
-    private final Integer id;
-    private final Integer ontologyId;
     private final String name;
-    private final String createdAt;
-    private final String updatedAt;
+    private final Integer ontologyId;
     private final List<TranslationDomain> translationList;
     private final LinkDomain linkDomain;
-    private final List<DefinitionDomain> definitions;
+    private final List<DefinitionDomain> definitionList;
     private final ConditionDomain condition;
 
 
-    public ClassDetail(
-            Integer id,
-            Integer ontologyId,
+    public NewClassDomain(
             String name,
-            String createdAt,
-            String updatedAt,
+            Integer ontologyId,
             List<TranslationDomain> translationList,
             LinkDomain linkDomain,
-            List<DefinitionDomain> definitions,
-            ConditionDomain condition) {
-        this.id = id;
-        this.ontologyId = ontologyId;
+            List<DefinitionDomain> definitionList,
+            ConditionDomain condition
+    ) {
+        super();
         this.name = name;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.ontologyId = ontologyId;
         this.translationList = translationList;
         this.linkDomain = linkDomain;
-        this.definitions = definitions;
+        this.definitionList = definitionList;
         this.condition = condition;
     }
 

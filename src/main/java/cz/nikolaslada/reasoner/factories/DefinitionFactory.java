@@ -5,7 +5,7 @@ import cz.nikolaslada.reasoner.domains.NameIdPairsDomain;
 import cz.nikolaslada.reasoner.repository.model.ClassSetModel;
 import cz.nikolaslada.reasoner.repository.model.DefinitionModel;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.ClassSetDomain;
-import cz.nikolaslada.reasoner.rest.swagger.domains.request.DefinitionDomain;
+import cz.nikolaslada.reasoner.rest.swagger.domains.DefinitionDomain;
 import cz.nikolaslada.reasoner.validators.ConditionValidator;
 import cz.nikolaslada.reasoner.validators.PropertyValidator;
 import org.springframework.stereotype.Component;
@@ -23,6 +23,15 @@ public class DefinitionFactory {
     public DefinitionFactory(ConditionValidator conditionValidator, PropertyValidator propertyValidator) {
         this.conditionValidator = conditionValidator;
         this.propertyValidator = propertyValidator;
+    }
+
+    public List<DefinitionModel> createModelList(List<DefinitionDomain> list, NameIdPairsDomain nameIdPairs) throws Exception {
+        List<DefinitionModel> set = new ArrayList<>();
+        for (DefinitionDomain d : list) {
+            set.add(this.createModel(d, nameIdPairs));
+        }
+
+        return set;
     }
 
     public DefinitionModel createModel(DefinitionDomain d, NameIdPairsDomain nameIdPairs) throws Exception {
@@ -46,6 +55,15 @@ public class DefinitionFactory {
                 set.isEmpty() ? null : set,
                 d.getName() == null ? null : nameIdPairs.getClassIdNameMap().get(d.getName())
         );
+    }
+
+    public List<DefinitionDomain> createDomainList(List<DefinitionModel> list, IdNamePairsDomain idNamePairs) throws Exception {
+        List<DefinitionDomain> set = new ArrayList<>();
+        for (DefinitionModel m : list) {
+            set.add(this.createDomain(m, idNamePairs));
+        }
+
+        return set;
     }
 
     public DefinitionDomain createDomain(DefinitionModel m, IdNamePairsDomain idNamePairs) throws Exception {

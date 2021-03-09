@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import java.util.List;
 
 @Getter
-public class ConditionModel implements ConditionComposite {
+public class ConditionModel {
 
     private final String type;
     @Nullable

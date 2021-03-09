@@ -1,5 +1,6 @@
-package cz.nikolaslada.reasoner.rest.swagger.domains.request;
+package cz.nikolaslada.reasoner.rest.swagger.domains;
 
+import cz.nikolaslada.reasoner.rest.swagger.domains.request.ClassSetDomain;
 import lombok.Getter;
 
 @Getter

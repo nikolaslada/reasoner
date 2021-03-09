@@ -1,10 +1,9 @@
 package cz.nikolaslada.reasoner.rest.swagger;
 
 import cz.nikolaslada.reasoner.mappers.ClassNodeMapper;
-import cz.nikolaslada.reasoner.repository.model.ClassNode;
-import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewClassNode;
+import cz.nikolaslada.reasoner.repository.model.ClassNodeModel;
+import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewClassDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.response.ClassDetail;
-import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
 import cz.nikolaslada.reasoner.services.ClassNodeService;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +18,9 @@ public class ClassNodeApi {
     }
 
     @GetMapping("/class-node/{id}")
-    public ClassDetail getOntology(@PathVariable int id) {
-        ClassNode classNode = this.service.getById(id);
-        return ClassNodeMapper.INSTANCE.classNodeModelToClassDetail(classNode);
+    public ClassDetail getOntology(@PathVariable Integer id) {
+        ClassNodeModel classNodeModel = this.service.getById(id);
+        return ClassNodeMapper.INSTANCE.classNodeModelToClassDetail(classNodeModel);
     }
 
     @PostMapping(
@@ -29,9 +28,9 @@ public class ClassNodeApi {
             produces = { "application/json" },
             consumes = { "application/json" }
     )
-    public ClassDetail post(@RequestBody NewClassNode newClassNode) throws ErrorException {
-        ClassNode classNode = this.service.create(newClassNode);
-        return ClassNodeMapper.INSTANCE.classNodeModelToClassDetail(classNode);
+    public ClassDetail post(@RequestBody NewClassDomain newClassDomain) throws Exception {
+        ClassNodeModel classNodeModel = this.service.create(newClassDomain);
+        return ClassNodeMapper.INSTANCE.classNodeModelToClassDetail(classNodeModel);
     }
 
 }

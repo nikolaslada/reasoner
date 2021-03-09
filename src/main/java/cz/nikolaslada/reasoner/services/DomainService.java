@@ -5,9 +5,9 @@ import cz.nikolaslada.reasoner.domains.NameIdPairsDomain;
 import cz.nikolaslada.reasoner.factories.DomainFactory;
 import cz.nikolaslada.reasoner.repository.ClassNodeRepository;
 import cz.nikolaslada.reasoner.repository.PropertyRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
-@Repository
+@Service
 public class DomainService {
 
     private final DomainFactory domainFactory;

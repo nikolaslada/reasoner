@@ -3,7 +3,7 @@ package cz.nikolaslada.reasoner.rest.swagger;
 import cz.nikolaslada.reasoner.mappers.OntologyMapper;
 import cz.nikolaslada.reasoner.repository.model.Ontology;
 import cz.nikolaslada.reasoner.rest.swagger.domains.OntologyDetail;
-import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewOntology;
+import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewOntologyDomain;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
@@ -33,7 +33,7 @@ public class OntologyApi {
             produces = { "application/json" },
             consumes = { "application/json" }
     )
-    public Ontology post(@RequestBody NewOntology request) throws ErrorException {
+    public Ontology post(@RequestBody NewOntologyDomain request) throws ErrorException {
         return this.service.create(request);
     }
 

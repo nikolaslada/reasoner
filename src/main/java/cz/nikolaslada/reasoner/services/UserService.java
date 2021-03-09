@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.Date;
 
 @Service
 public class UserService {
