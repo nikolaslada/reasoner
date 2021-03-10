@@ -1,6 +1,8 @@
 package cz.nikolaslada.reasoner.services;
 
 import cz.nikolaslada.reasoner.factories.SharedFactory;
+import cz.nikolaslada.reasoner.repository.ClassNodeRepository;
+import cz.nikolaslada.reasoner.repository.PropertyRepository;
 import cz.nikolaslada.reasoner.repository.model.Ontology;
 import cz.nikolaslada.reasoner.repository.OntologyRepository;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewOntologyDomain;
@@ -17,20 +19,27 @@ import java.util.Arrays;
 public class OntologyService {
 
     private static final String CONFLICT_MESSAGE_BY_NAME = "There is Ontology with same name: ";
+    private static final String CONFLICT_MESSAGE_BY_REF = "There is at least one reference to this Ontology ID: ";
     private static final String GONE_MESSAGE = "Cannot to remove Ontology. There is no Ontology with ID: ";
     private static final String NOT_FOUND_MESSAGE = "There is no Ontology with ID: ";
 
     private final OntologyRepository ontologyRepository;
+    private final ClassNodeRepository classNodeRepository;
+    private final PropertyRepository propertyRepository;
     private final SequenceService sequenceService;
     private final SharedFactory sharedFactory;
 
 
     public OntologyService(
             OntologyRepository ontologyRepository,
+            ClassNodeRepository classNodeRepository,
+            PropertyRepository propertyRepository,
             SequenceService sequenceService,
             SharedFactory sharedFactory
     ) {
         this.ontologyRepository = ontologyRepository;
+        this.classNodeRepository = classNodeRepository;
+        this.propertyRepository = propertyRepository;
         this.sequenceService = sequenceService;
         this.sharedFactory = sharedFactory;
     }
@@ -90,6 +99,23 @@ public class OntologyService {
                     Arrays.asList(
                             new ErrorItem(
                                     GONE_MESSAGE,
+                                    Arrays.asList(
+                                            id.toString()
+                                    )
+                            )
+                    )
+            );
+        }
+
+        if (
+                this.classNodeRepository.existsByOntologyId(id)
+                || this.propertyRepository.existsByOntologyId(id)
+        ) {
+            throw new ConflictException(
+                    CONFLICT_MESSAGE_BY_REF,
+                    Arrays.asList(
+                            new ErrorItem(
+                                    CONFLICT_MESSAGE_BY_REF,
                                     Arrays.asList(
                                             id.toString()
                                     )

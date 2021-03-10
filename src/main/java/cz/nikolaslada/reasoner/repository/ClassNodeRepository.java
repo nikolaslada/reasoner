@@ -10,6 +10,7 @@ import java.util.List;
 public interface ClassNodeRepository extends MongoRepository<ClassNodeModel, String> {
 
     Boolean existsByName(String name);
+    Boolean existsByOntologyId(Integer id);
     ClassNodeModel findById(Integer id);
     List<ClassNodeModel> findAllByOntologyId(Integer id);
 

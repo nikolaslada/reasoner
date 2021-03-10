@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface PropertyRepository extends MongoRepository<Property, String> {
 
+    Boolean existsByOntologyId(Integer id);
     List<Property> findAllByOntologyId(Integer id);
 
 }
