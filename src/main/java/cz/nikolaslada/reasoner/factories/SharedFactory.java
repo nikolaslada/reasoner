@@ -1,7 +1,10 @@
 package cz.nikolaslada.reasoner.factories;
 
+import cz.nikolaslada.reasoner.mappers.LinkMapper;
 import cz.nikolaslada.reasoner.mappers.TranslationMapper;
+import cz.nikolaslada.reasoner.repository.model.LinkModel;
 import cz.nikolaslada.reasoner.repository.model.TranslationModel;
+import cz.nikolaslada.reasoner.rest.swagger.domains.LinkDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.TranslationDomain;
 import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
@@ -10,39 +13,53 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 @Component
-public class TranslationFactory {
+public class SharedFactory {
 
     private final IsoValidator validator;
 
 
-    public TranslationFactory(IsoValidator validator) {
+    public SharedFactory(IsoValidator validator) {
         this.validator = validator;
     }
 
-    public List<TranslationDomain> createDomainList(List<TranslationModel> list) {
-        Iterator<TranslationModel> i = list.iterator();
+    public LinkModel createLinkModel(LinkDomain domain) throws BadRequestException {
+        if (!this.validator.isIsoLanguageValid(domain.getIso())) {
+            throw new BadRequestException(
+                    IsoValidator.ERROR_MESSAGE_PATTERN,
+                    Arrays.asList(
+                            new ErrorItem(
+                                    IsoValidator.ERROR_MESSAGE_PATTERN,
+                                    Arrays.asList(
+                                            domain.getIso()
+                                    )
+                            )
+                    )
+            );
+        }
+
+        return LinkMapper.INSTANCE.domainToModel(domain);
+    }
+
+    public List<TranslationDomain> createTranslationDomainList(List<TranslationModel> list) {
         List<TranslationDomain> domainList = new ArrayList<>();
 
-        while (i.hasNext()) {
+        for (TranslationModel m : list) {
             domainList.add(
-                    TranslationMapper.INSTANCE.modelToDomain(i.next())
+                    TranslationMapper.INSTANCE.modelToDomain(m)
             );
         }
 
         return domainList;
     }
 
-    public List<TranslationModel> createModelList(List<TranslationDomain> list) throws BadRequestException {
-        Iterator<TranslationDomain> i = list.iterator();
+    public List<TranslationModel> createTranslationModelList(List<TranslationDomain> list) throws BadRequestException {
         List<TranslationModel> modelList = new ArrayList<>();
         List<String> notValidIsoList = new ArrayList<>();
 
-        while (i.hasNext()) {
-            TranslationDomain d = i.next();
+        for (TranslationDomain d : list) {
             if (!this.validator.isIsoLanguageValid(d.getIso())) {
                 notValidIsoList.add(d.getIso());
             }

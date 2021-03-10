@@ -1,6 +1,8 @@
 package cz.nikolaslada.reasoner.factories;
 
+import cz.nikolaslada.reasoner.repository.model.LinkModel;
 import cz.nikolaslada.reasoner.repository.model.TranslationModel;
+import cz.nikolaslada.reasoner.rest.swagger.domains.LinkDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.TranslationDomain;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
 import cz.nikolaslada.reasoner.validators.IsoValidator;
@@ -13,14 +15,51 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Unit tests for TranslationFactory")
-public class TranslationFactoryTest {
+public class SharedFactoryTest {
 
     public IsoValidator i = new IsoValidator();
-    public TranslationFactory f = new TranslationFactory(i);
+    public SharedFactory f = new SharedFactory(i);
 
-    @DisplayName("Create list of TranslationDetail test")
+    @DisplayName("Create of LinkModel test")
     @Test
-    void createDetailListTest() {
+    void createLinkModelTest() {
+        LinkDomain d = new LinkDomain(
+                "en",
+                "http://example.org/en/test",
+                "EN Test"
+        );
+
+        LinkModel m = f.createLinkModel(d);
+
+        assertSame("en", m.getIso());
+        assertSame("EN Test", m.getTitle());
+        assertSame("http://example.org/en/test", m.getUrl());
+    }
+
+    @DisplayName("Create of LinkModel exception test")
+    @Test
+    void createLinkModelExceptionTest() {
+        String unknownIso = "XX";
+        LinkDomain d = new LinkDomain(
+                unknownIso,
+                "http://example.org/xx/test",
+                "XX Test"
+        );
+
+        BadRequestException e = assertThrows(BadRequestException.class, () -> {
+            f.createLinkModel(d);
+        });
+
+        String expected = IsoValidator.ERROR_MESSAGE_PATTERN;
+        String actual = e.getMessage();
+
+        assertTrue(actual.contains(expected));
+        assertTrue(e.getErrorList().get(0).getData().get(0).contains(unknownIso));
+    }
+
+    @DisplayName("Create list of TranslationDomain test")
+    @Test
+    void createTranslationDomainListTest() {
         List<TranslationModel> m = Arrays.asList(
                 new TranslationModel(
                         "en",
@@ -34,7 +73,7 @@ public class TranslationFactoryTest {
                 )
         );
 
-        List<TranslationDomain> d = f.createDomainList(m);
+        List<TranslationDomain> d = f.createTranslationDomainList(m);
 
         assertSame(2, d.size());
         assertSame("TestEN", d.get(0).getName());
@@ -44,7 +83,7 @@ public class TranslationFactoryTest {
 
     @DisplayName("Create list of TranslationModel test")
     @Test
-    void createModelListTest() {
+    void createTranslationModelListTest() {
         List<TranslationDomain> d = Arrays.asList(
                 new TranslationDomain(
                         "en",
@@ -58,7 +97,7 @@ public class TranslationFactoryTest {
                 )
         );
 
-        List<TranslationModel> m = f.createModelList(d);
+        List<TranslationModel> m = f.createTranslationModelList(d);
 
         assertSame(2, m.size());
         assertSame("TestEN", m.get(0).getName());
@@ -68,7 +107,7 @@ public class TranslationFactoryTest {
 
     @DisplayName("Create list of TranslationModel exception test")
     @Test
-    void createModelListExceptionTest() {
+    void createTranslationModelListExceptionTest() {
         String unknownIso = "XX";
         List<TranslationDomain> translationList = Arrays.asList(
                 new TranslationDomain(
@@ -79,7 +118,7 @@ public class TranslationFactoryTest {
         );
 
         BadRequestException e = assertThrows(BadRequestException.class, () -> {
-            f.createModelList(translationList);
+            f.createTranslationModelList(translationList);
         });
 
         String expected = IsoValidator.ERROR_MESSAGE_PATTERN;

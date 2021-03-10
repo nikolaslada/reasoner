@@ -1,9 +1,9 @@
 package cz.nikolaslada.reasoner.services;
 
-import cz.nikolaslada.reasoner.factories.TranslationFactory;
+import cz.nikolaslada.reasoner.factories.SharedFactory;
 import cz.nikolaslada.reasoner.repository.model.Ontology;
 import cz.nikolaslada.reasoner.repository.OntologyRepository;
-import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewOntology;
+import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewOntologyDomain;
 import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
@@ -22,17 +22,17 @@ public class OntologyService {
 
     private final OntologyRepository ontologyRepository;
     private final SequenceService sequenceService;
-    private final TranslationFactory translationFactory;
+    private final SharedFactory sharedFactory;
 
 
     public OntologyService(
             OntologyRepository ontologyRepository,
             SequenceService sequenceService,
-            TranslationFactory translationFactory
+            SharedFactory sharedFactory
     ) {
         this.ontologyRepository = ontologyRepository;
         this.sequenceService = sequenceService;
-        this.translationFactory = translationFactory;
+        this.sharedFactory = sharedFactory;
     }
 
     public Ontology getById(Integer id) throws NotFoundException {
@@ -55,7 +55,7 @@ public class OntologyService {
         }
     }
 
-    public Ontology create(NewOntology request) throws ErrorException {
+    public Ontology create(NewOntologyDomain request) throws ErrorException {
         if (this.ontologyRepository.existsByName(request.getName())) {
             throw new ConflictException(
                     CONFLICT_MESSAGE_BY_NAME,
@@ -74,7 +74,7 @@ public class OntologyService {
                 new Ontology(
                     this.sequenceService.getNewSequence(Ontology.SEQUENCE_NAME, 1).getSeq(),
                     request.getName(),
-                    this.translationFactory.createModelList(request.getTranslationList()),
+                    this.sharedFactory.createTranslationModelList(request.getTranslationList()),
                     // owner
                     null,
                     null,

@@ -2,8 +2,7 @@ package cz.nikolaslada.reasoner.services;
 
 import cz.nikolaslada.reasoner.domains.NameIdPairsDomain;
 import cz.nikolaslada.reasoner.factories.ClassNodeFactory;
-import cz.nikolaslada.reasoner.factories.LinkFactory;
-import cz.nikolaslada.reasoner.factories.TranslationFactory;
+import cz.nikolaslada.reasoner.factories.SharedFactory;
 import cz.nikolaslada.reasoner.repository.ClassNodeRepository;
 import cz.nikolaslada.reasoner.repository.model.ClassNodeModel;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewClassDomain;
@@ -25,8 +24,7 @@ public class ClassNodeService {
     private final ClassNodeRepository classNodeRepository;
     private final SequenceService sequenceService;
     private final DomainService domainService;
-    private final TranslationFactory translationFactory;
-    private final LinkFactory linkFactory;
+    private final SharedFactory sharedFactory;
     private final ClassNodeFactory classNodeFactory;
 
 
@@ -34,15 +32,13 @@ public class ClassNodeService {
             ClassNodeRepository classNodeRepository,
             SequenceService sequenceService,
             DomainService domainService,
-            TranslationFactory translationFactory,
-            LinkFactory linkFactory,
+            SharedFactory sharedFactory,
             ClassNodeFactory classNodeFactory
     ) {
         this.classNodeRepository = classNodeRepository;
         this.sequenceService = sequenceService;
         this.domainService = domainService;
-        this.translationFactory = translationFactory;
-        this.linkFactory = linkFactory;
+        this.sharedFactory = sharedFactory;
         this.classNodeFactory = classNodeFactory;
     }
 
@@ -90,8 +86,8 @@ public class ClassNodeService {
                     // owner
                     ZonedDateTime.now(ZoneOffset.UTC),
                     null,
-                    this.translationFactory.createModelList(request.getTranslationList()),
-                    this.linkFactory.createModel(request.getLinkDomain()),
+                    this.sharedFactory.createTranslationModelList(request.getTranslationList()),
+                    this.sharedFactory.createLinkModel(request.getLinkDomain()),
                     this.classNodeFactory.createDefinitionModelList(
                             request.getDefinitionList(),
                             nameIdPairs
