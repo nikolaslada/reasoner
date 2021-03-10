@@ -1,8 +1,7 @@
 package cz.nikolaslada.reasoner.services;
 
 import cz.nikolaslada.reasoner.domains.NameIdPairsDomain;
-import cz.nikolaslada.reasoner.factories.ConditionFactory;
-import cz.nikolaslada.reasoner.factories.DefinitionFactory;
+import cz.nikolaslada.reasoner.factories.ClassNodeFactory;
 import cz.nikolaslada.reasoner.factories.LinkFactory;
 import cz.nikolaslada.reasoner.factories.TranslationFactory;
 import cz.nikolaslada.reasoner.repository.ClassNodeRepository;
@@ -28,8 +27,7 @@ public class ClassNodeService {
     private final DomainService domainService;
     private final TranslationFactory translationFactory;
     private final LinkFactory linkFactory;
-    private final DefinitionFactory definitionFactory;
-    private final ConditionFactory conditionFactory;
+    private final ClassNodeFactory classNodeFactory;
 
 
     public ClassNodeService(
@@ -38,16 +36,14 @@ public class ClassNodeService {
             DomainService domainService,
             TranslationFactory translationFactory,
             LinkFactory linkFactory,
-            DefinitionFactory definitionFactory,
-            ConditionFactory conditionFactory
+            ClassNodeFactory classNodeFactory
     ) {
         this.classNodeRepository = classNodeRepository;
         this.sequenceService = sequenceService;
         this.domainService = domainService;
         this.translationFactory = translationFactory;
         this.linkFactory = linkFactory;
-        this.definitionFactory = definitionFactory;
-        this.conditionFactory = conditionFactory;
+        this.classNodeFactory = classNodeFactory;
     }
 
     public ClassNodeModel getById(Integer id) throws NotFoundException {
@@ -96,11 +92,11 @@ public class ClassNodeService {
                     null,
                     this.translationFactory.createModelList(request.getTranslationList()),
                     this.linkFactory.createModel(request.getLinkDomain()),
-                    this.definitionFactory.createModelList(
+                    this.classNodeFactory.createDefinitionModelList(
                             request.getDefinitionList(),
                             nameIdPairs
                     ),
-                    this.conditionFactory.createModel(
+                    this.classNodeFactory.createConditionModel(
                             request.getCondition(),
                             nameIdPairs
                     )

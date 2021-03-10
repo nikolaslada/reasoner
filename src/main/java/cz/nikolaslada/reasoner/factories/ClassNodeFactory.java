@@ -2,8 +2,12 @@ package cz.nikolaslada.reasoner.factories;
 
 import cz.nikolaslada.reasoner.domains.IdNamePairsDomain;
 import cz.nikolaslada.reasoner.domains.NameIdPairsDomain;
+import cz.nikolaslada.reasoner.repository.model.ClassSetModel;
 import cz.nikolaslada.reasoner.repository.model.ConditionModel;
+import cz.nikolaslada.reasoner.repository.model.DefinitionModel;
 import cz.nikolaslada.reasoner.rest.swagger.domains.ConditionDomain;
+import cz.nikolaslada.reasoner.rest.swagger.domains.DefinitionDomain;
+import cz.nikolaslada.reasoner.rest.swagger.domains.request.ClassSetDomain;
 import cz.nikolaslada.reasoner.validators.ConditionValidator;
 import cz.nikolaslada.reasoner.validators.PropertyValidator;
 import org.springframework.stereotype.Component;
@@ -15,21 +19,21 @@ import static cz.nikolaslada.reasoner.repository.identifiers.ConditionTypeId.*;
 import static cz.nikolaslada.reasoner.rest.swagger.identifiers.ConditionTypeId.*;
 
 @Component
-public class ConditionFactory {
+public class ClassNodeFactory {
 
     private final ConditionValidator conditionValidator;
     private final PropertyValidator propertyValidator;
 
 
-    public ConditionFactory(ConditionValidator conditionValidator, PropertyValidator propertyValidator) {
+    public ClassNodeFactory(ConditionValidator conditionValidator, PropertyValidator propertyValidator) {
         this.conditionValidator = conditionValidator;
         this.propertyValidator = propertyValidator;
     }
 
-    public ConditionModel createModel(ConditionDomain domain, NameIdPairsDomain nameIdPairs) throws Exception {
+    public ConditionModel createConditionModel(ConditionDomain domain, NameIdPairsDomain nameIdPairs) throws Exception {
         List<ConditionModel> set = new ArrayList<>();
         for (ConditionDomain cD : domain.getSet()) {
-            set.add(this.createModel(cD, nameIdPairs));
+            set.add(this.createConditionModel(cD, nameIdPairs));
         }
 
         switch (domain.getType()) {
@@ -83,10 +87,10 @@ public class ConditionFactory {
         }
     }
 
-    public ConditionDomain createDomain(ConditionModel model, IdNamePairsDomain idNamePairs) throws Exception {
+    public ConditionDomain createConditionDomain(ConditionModel model, IdNamePairsDomain idNamePairs) throws Exception {
         List<ConditionDomain> set = new ArrayList<>();
         for (ConditionModel cM : model.getSet()) {
-            set.add(this.createDomain(cM, idNamePairs));
+            set.add(this.createConditionDomain(cM, idNamePairs));
         }
 
         switch (model.getType()) {
@@ -134,6 +138,70 @@ public class ConditionFactory {
                         )
                 );
         }
+    }
+
+    public List<DefinitionModel> createDefinitionModelList(List<DefinitionDomain> list, NameIdPairsDomain nameIdPairs) throws Exception {
+        List<DefinitionModel> set = new ArrayList<>();
+        for (DefinitionDomain d : list) {
+            set.add(this.createDefinitionModel(d, nameIdPairs));
+        }
+
+        return set;
+    }
+
+    public DefinitionModel createDefinitionModel(DefinitionDomain d, NameIdPairsDomain nameIdPairs) throws Exception {
+        return new DefinitionModel(
+                d.getClassName() == null ? null : nameIdPairs.getClassIdNameMap().get(d.getClassName()),
+                d.getProperty() == null ? null : nameIdPairs.getPropertyIdNameMap().get(d.getProperty()),
+                this.propertyValidator.getDbRestriction(d.getRestriction()),
+                d.getSet() == null ? null : this.createClassSetModel(d.getSet(), nameIdPairs),
+                d.getVal()
+        );
+    }
+
+    public ClassSetModel createClassSetModel(ClassSetDomain d, NameIdPairsDomain nameIdPairs) throws Exception {
+        List<ClassSetModel> set = new ArrayList<>();
+        for (ClassSetDomain classSet : d.getSet()) {
+            set.add(this.createClassSetModel(classSet, nameIdPairs));
+        }
+
+        return new ClassSetModel(
+                this.conditionValidator.getDbOperator(d.getOp()),
+                set.isEmpty() ? null : set,
+                d.getName() == null ? null : nameIdPairs.getClassIdNameMap().get(d.getName())
+        );
+    }
+
+    public List<DefinitionDomain> createDefinitionDomainList(List<DefinitionModel> list, IdNamePairsDomain idNamePairs) throws Exception {
+        List<DefinitionDomain> set = new ArrayList<>();
+        for (DefinitionModel m : list) {
+            set.add(this.createDefinitionDomain(m, idNamePairs));
+        }
+
+        return set;
+    }
+
+    public DefinitionDomain createDefinitionDomain(DefinitionModel m, IdNamePairsDomain idNamePairs) throws Exception {
+        return new DefinitionDomain(
+                idNamePairs.getClassIdNameMap().get(m.getCId()),
+                idNamePairs.getPropertyIdNameMap().get(m.getPId()),
+                this.propertyValidator.getApiRestriction(m.getRestrict()),
+                m.getSet() == null ? null : this.createClassSetDomain(m.getSet(), idNamePairs),
+                m.getVal()
+        );
+    }
+
+    public ClassSetDomain createClassSetDomain(ClassSetModel m, IdNamePairsDomain idNamePairs) throws Exception {
+        List<ClassSetDomain> set = new ArrayList<>();
+        for (ClassSetModel classSet : m.getSet()) {
+            set.add(this.createClassSetDomain(classSet, idNamePairs));
+        }
+
+        return new ClassSetDomain(
+                this.conditionValidator.getApiOperator(m.getOp()),
+                set.isEmpty() ? null : set,
+                m.getCId() == null ? null : idNamePairs.getClassIdNameMap().get(m.getCId())
+        );
     }
 
 }
