@@ -8,8 +8,8 @@ import java.util.List;
 @Getter
 public class ClassSetModel {
 
-    private final String op;
     @Nullable
+    private final String op;
     private final List<ClassSetModel> set;
     @Nullable
     private final Integer cId;

@@ -1,6 +1,6 @@
 package cz.nikolaslada.reasoner.validators;
 
-import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
+import cz.nikolaslada.reasoner.rest.swagger.error.BadRequestBuilder;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.InternalException;
 import org.springframework.stereotype.Component;
@@ -22,17 +22,12 @@ public class ClassValidator {
         Integer length = name.length();
 
         if (length > NAME_MAX_LENGTH) {
-            throw new BadRequestException(
-                    Arrays.asList(
-                            new ErrorItem(
-                                    "Length of class name must not be greater than %d! Current length is %d",
-                                    Arrays.asList(
-                                            NAME_MAX_LENGTH.toString(),
-                                            length.toString()
-                                    )
-                            )
+            throw new BadRequestBuilder()
+                    .addErrorItem(
+                            "Length of class name must not be greater than %d! Current length is %d",
+                            Arrays.asList(NAME_MAX_LENGTH.toString(), length.toString())
                     )
-            );
+                    .build();
         }
 
         return NAME_PATTERN.matcher(name).matches();
@@ -45,16 +40,9 @@ public class ClassValidator {
             case OR_API:
                 return OR_DB;
             default:
-                throw new BadRequestException(
-                        Arrays.asList(
-                                new ErrorItem(
-                                        "Not supported id of operator '%c'.",
-                                        Arrays.asList(
-                                                id
-                                        )
-                                )
-                        )
-                );
+                throw new BadRequestBuilder()
+                        .addErrorItem("Not supported id of operator '%c'.", id)
+                        .build();
         }
     }
 
@@ -65,12 +53,11 @@ public class ClassValidator {
             case OR_DB:
                 return OR_API;
             default:
-                throw new InternalException(
-                        "Not supported id of operator '%c' in database.",
-                        Arrays.asList(
-                                id
-                        )
-                );
+                throw InternalException
+                        .builder()
+                        .message("Not supported id of operator '%c' in database.")
+                        .data(Arrays.asList(id))
+                        .build();
         }
     }
 

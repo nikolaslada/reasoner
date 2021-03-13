@@ -1,5 +1,6 @@
 package cz.nikolaslada.reasoner.factories;
 
+import cz.nikolaslada.reasoner.domains.IdNamePairsDomain;
 import cz.nikolaslada.reasoner.domains.NameIdPairsDomain;
 import cz.nikolaslada.reasoner.repository.model.ClassSetModel;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.ClassSetDomain;
@@ -25,7 +26,7 @@ public class ClassNodeFactoryTest {
 
     @DisplayName("Create of ClassSetModel test")
     @Test
-    void createLinkModelTest() {
+    void createClassSetModelTest() {
         HashMap<String, Integer> classNameIdMap = new HashMap<>();
         HashMap<String, Integer> propertyNameIdMap = new HashMap<>();
         classNameIdMap.put("TestClassA", 1);
@@ -44,7 +45,7 @@ public class ClassNodeFactoryTest {
                         ),
                         new ClassSetDomain(
                                 null,
-                                null,
+                                new ArrayList<>(),
                                 "TestClassB"
                         ),
                         new ClassSetDomain(
@@ -52,7 +53,7 @@ public class ClassNodeFactoryTest {
                                 Arrays.asList(
                                         new ClassSetDomain(
                                                 null,
-                                                null,
+                                                new ArrayList<>(),
                                                 "TestClassC"
                                         ),
                                         new ClassSetDomain(
@@ -74,19 +75,19 @@ public class ClassNodeFactoryTest {
         assertEquals(null, m1.getCId());
 
         assertEquals(null, m1.getSet().get(0).getOp());
-        assertEquals(null, m1.getSet().get(0).getSet());
+        assertEquals(0, m1.getSet().get(0).getSet().size());
         assertEquals(1, m1.getSet().get(0).getCId());
         assertEquals(null, m1.getSet().get(1).getOp());
-        assertEquals(null, m1.getSet().get(1).getSet());
+        assertEquals(0, m1.getSet().get(1).getSet().size());
         assertEquals(22, m1.getSet().get(1).getCId());
         assertEquals("a", m1.getSet().get(2).getOp());
         assertEquals(null, m1.getSet().get(2).getCId());
 
         assertEquals(null, m1.getSet().get(2).getSet().get(0).getOp());
-        assertEquals(null, m1.getSet().get(2).getSet().get(0).getSet());
+        assertEquals(0, m1.getSet().get(2).getSet().get(0).getSet().size());
         assertEquals(333, m1.getSet().get(2).getSet().get(0).getCId());
         assertEquals(null, m1.getSet().get(2).getSet().get(1).getOp());
-        assertEquals(null, m1.getSet().get(2).getSet().get(1).getSet());
+        assertEquals(0, m1.getSet().get(2).getSet().get(1).getSet().size());
         assertEquals(4444, m1.getSet().get(2).getSet().get(1).getCId());
 
 
@@ -100,7 +101,7 @@ public class ClassNodeFactoryTest {
         ClassSetModel m2 = f.createClassSetModel(d2, nameIdPairsDomain, b2, 0);
 
         assertEquals(null, m2.getOp());
-        assertEquals(null, m2.getSet());
+        assertEquals(0, m2.getSet().size());
         assertEquals(1, m2.getCId());
     }
 
@@ -189,6 +190,85 @@ public class ClassNodeFactoryTest {
 
         assertTrue(e.getErrorList().get(0).getMessage().contains(ClassNodeFactory.DEFINITION_SET_OP_CLASS));
         assertTrue(e.getErrorList().get(1).getMessage().contains(ClassNodeFactory.DEFINITION_SET_OP_SET));
+    }
+
+    @DisplayName("Create of ClassSetDomain test")
+    @Test
+    void createClassSetDomainTest() {
+        HashMap<Integer, String> classIdNameMap = new HashMap<>();
+        HashMap<Integer, String> propertyIdNameMap = new HashMap<>();
+        classIdNameMap.put(1, "TestClassA");
+        classIdNameMap.put(22, "TestClassB");
+        classIdNameMap.put(333, "TestClassC");
+        classIdNameMap.put(4444, "TestClassD");
+        IdNamePairsDomain idNamePairsDomain = new IdNamePairsDomain(classIdNameMap, propertyIdNameMap);
+
+        ClassSetModel m1 = new ClassSetModel(
+                "a",
+                Arrays.asList(
+                        new ClassSetModel(
+                                null,
+                                new ArrayList<>(),
+                                1
+                        ),
+                        new ClassSetModel(
+                                null,
+                                new ArrayList<>(),
+                                22
+                        ),
+                        new ClassSetModel(
+                                "o",
+                                Arrays.asList(
+                                        new ClassSetModel(
+                                                null,
+                                                new ArrayList<>(),
+                                                333
+                                        ),
+                                        new ClassSetModel(
+                                                null,
+                                                new ArrayList<>(),
+                                                4444
+                                        )
+                                ),
+                                null
+                        )
+                ),
+                null
+        );
+
+        ClassSetDomain d1 = f.createClassSetDomain(m1, idNamePairsDomain);
+
+        assertEquals("and", d1.getOp());
+        assertEquals(null, d1.getName());
+
+        assertEquals(null, d1.getSet().get(0).getOp());
+        assertEquals(0, d1.getSet().get(0).getSet().size());
+        assertEquals("TestClassA", d1.getSet().get(0).getName());
+        assertEquals(null, d1.getSet().get(1).getOp());
+        assertEquals(0, d1.getSet().get(1).getSet().size());
+        assertEquals("TestClassB", d1.getSet().get(1).getName());
+        assertEquals("or", d1.getSet().get(2).getOp());
+        assertEquals(null, d1.getSet().get(2).getName());
+
+        assertEquals(null, d1.getSet().get(2).getSet().get(0).getOp());
+        assertEquals(0, d1.getSet().get(2).getSet().get(0).getSet().size());
+        assertEquals("TestClassC", d1.getSet().get(2).getSet().get(0).getName());
+        assertEquals(null, d1.getSet().get(2).getSet().get(1).getOp());
+        assertEquals(0, d1.getSet().get(2).getSet().get(1).getSet().size());
+        assertEquals("TestClassD", d1.getSet().get(2).getSet().get(1).getName());
+
+
+        ClassSetModel m2 = new ClassSetModel(
+                null,
+                new ArrayList<>(),
+                1
+        );
+
+        ClassSetDomain d2 = f.createClassSetDomain(m2, idNamePairsDomain);
+
+        assertEquals(null, d2.getOp());
+        assertEquals(0, d2.getSet().size());
+        assertEquals("TestClassA", d2.getName());
     }
 
 }

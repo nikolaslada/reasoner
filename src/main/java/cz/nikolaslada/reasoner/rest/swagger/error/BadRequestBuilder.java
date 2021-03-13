@@ -14,25 +14,27 @@ public class BadRequestBuilder {
         this.errorItemList = new ArrayList<>();
     }
 
-    public void addErrorItem(String message) {
+    public BadRequestBuilder addErrorItem(String message) {
         this.errorItemList.add(
                 new ErrorItem(
                         message,
                         new ArrayList<>()
                 )
         );
+        return this;
     }
 
-    public void addErrorItem(String message, List<String> data) {
+    public BadRequestBuilder addErrorItem(String message, List<String> data) {
         this.errorItemList.add(
                 new ErrorItem(
                         message,
                         data
                 )
         );
+        return this;
     }
 
-    public void addErrorItem(String message, String data) {
+    public BadRequestBuilder addErrorItem(String message, String data) {
         this.errorItemList.add(
                 new ErrorItem(
                         message,
@@ -41,6 +43,7 @@ public class BadRequestBuilder {
                         )
                 )
         );
+        return this;
     }
 
     public Boolean isEmpty() {

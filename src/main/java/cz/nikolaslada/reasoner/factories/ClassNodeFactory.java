@@ -179,24 +179,22 @@ public class ClassNodeFactory {
     ) throws BadRequestException {
         String dbOp;
         Integer cId;
-        List<ClassSetModel> set;
+        List<ClassSetModel> set = new ArrayList<>();
 
         if (d.getOp() == null) {
             dbOp = null;
             cId = nameIdPairs.getClassIdNameMap().get(d.getName());
-            set = null;
 
             if (d.getName() == null) {
                 badRequestBuilder.addErrorItem(DEFINITION_SET_OP_CLASS);
             }
 
-            if (d.getSet() != null) {
+            if (d.getSet() != null && !d.getSet().isEmpty()) {
                 badRequestBuilder.addErrorItem(DEFINITION_SET_OP_SET);
             }
         } else {
             dbOp = this.classValidator.getDbOperator(d.getOp());
             cId = null;
-            set = new ArrayList<>();
 
             if (d.getName() != null) {
                 badRequestBuilder.addErrorItem(DEFINITION_SET_OP_CLASS, Arrays.asList(d.getOp(), d.getName()));
@@ -248,8 +246,8 @@ public class ClassNodeFactory {
         }
 
         return new ClassSetDomain(
-                this.classValidator.getApiOperator(m.getOp()),
-                set.isEmpty() ? null : set,
+                m.getOp() == null ? null : this.classValidator.getApiOperator(m.getOp()),
+                set,
                 m.getCId() == null ? null : idNamePairs.getClassIdNameMap().get(m.getCId())
         );
     }
