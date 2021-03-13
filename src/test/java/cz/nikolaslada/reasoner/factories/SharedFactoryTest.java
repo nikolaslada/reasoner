@@ -4,6 +4,7 @@ import cz.nikolaslada.reasoner.repository.model.LinkModel;
 import cz.nikolaslada.reasoner.repository.model.TranslationModel;
 import cz.nikolaslada.reasoner.rest.swagger.domains.LinkDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.TranslationDomain;
+import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
 import cz.nikolaslada.reasoner.validators.IsoValidator;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Unit tests for TranslationFactory")
+@DisplayName("Unit tests for SharedFactory")
 public class SharedFactoryTest {
 
     public IsoValidator i = new IsoValidator();
@@ -50,11 +51,12 @@ public class SharedFactoryTest {
             f.createLinkModel(d);
         });
 
+        ErrorItem errorItem = e.getErrorList().get(0);
         String expected = IsoValidator.ERROR_MESSAGE_PATTERN;
-        String actual = e.getMessage();
+        String actual = errorItem.getMessage();
 
         assertTrue(actual.contains(expected));
-        assertTrue(e.getErrorList().get(0).getData().get(0).contains(unknownIso));
+        assertTrue(errorItem.getData().contains(unknownIso));
     }
 
     @DisplayName("Create list of TranslationDomain test")
@@ -121,11 +123,12 @@ public class SharedFactoryTest {
             f.createTranslationModelList(translationList);
         });
 
+        ErrorItem errorItem = e.getErrorList().get(0);
         String expected = IsoValidator.ERROR_MESSAGE_PATTERN;
-        String actual = e.getMessage();
+        String actual = errorItem.getMessage();
 
         assertTrue(actual.contains(expected));
-        assertTrue(e.getErrorList().get(0).getData().get(0).contains(unknownIso));
+        assertTrue(errorItem.getData().get(0).contains(unknownIso));
     }
 
 }

@@ -3,7 +3,9 @@ package cz.nikolaslada.reasoner.validators;
 import static cz.nikolaslada.reasoner.repository.identifiers.RestrictionId.*;
 import static cz.nikolaslada.reasoner.rest.swagger.identifiers.RestrictionId.*;
 
-import cz.nikolaslada.reasoner.domains.Restriction;
+import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
+import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
+import cz.nikolaslada.reasoner.rest.swagger.exceptions.InternalException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +18,7 @@ public class PropertyValidatorTest {
 
     @DisplayName("Property name validation test")
     @Test
-    void isNameValidTest() throws Exception {
+    void isNameValidTest() throws BadRequestException {
         assertTrue(p.isNameValid("property13"));
         assertTrue(p.isNameValid("property_Name"));
         assertTrue(p.isNameValid("a"));
@@ -44,17 +46,19 @@ public class PropertyValidatorTest {
     @DisplayName("Property name validation test, thrown exception")
     @Test
     void isNameValidExceptionTest() {
-        Exception e = assertThrows(
-                Exception.class,
+        BadRequestException e = assertThrows(
+                BadRequestException.class,
                 () -> p.isNameValid("psds5pBHwOFZwnCzbBvw56KITQDjTRuapanzVlPS0McdxlEeL1ShXyX7QlXjTU8G7WY4LdUk4jFok2A7vqxAYZrzB8uwYIx56iOrDrVHV7aoUj3D7YXmMHT9MSt3OuA9qXjEC8GbigDpyw6F1Udy3SPO1a5r1RLDrUgLhftsADicgWAXUcIYkpCyNzhxt7E2kYMR80Ch3EqL7tRIndchgpkRm6vEIRRrxvAmpU3ehvedxdfpzw5pBfSyxnVdBMQO"),
                 "Expected isNameValid() to throw"
         );
-        assertTrue(e.getMessage().contains("Length of property name must not be greater than 255! Current length is 256"));
+        ErrorItem errorItem = e.getErrorList().get(0);
+        assertTrue(errorItem.getData().get(0).contains("255"));
+        assertTrue(errorItem.getData().get(1).contains("256"));
     }
 
     @DisplayName("Property get Api Restriction test")
     @Test
-    void getApiRestrictionTest() throws Exception {
+    void getApiRestrictionTest() throws InternalException {
         assertEquals(p.getApiRestriction(null), null);
         assertEquals(p.getApiRestriction("s"), SOME_API);
         assertEquals(p.getApiRestriction("o"), ONLY_API);
@@ -74,17 +78,17 @@ public class PropertyValidatorTest {
     @DisplayName("Property get Api Restriction test, thrown exception")
     @Test
     void getApiRestrictionExceptionTest() {
-        Exception e = assertThrows(
-                Exception.class,
-                () -> p.getDbRestriction(" "),
+        InternalException e = assertThrows(
+                InternalException.class,
+                () -> p.getApiRestriction(" "),
                 "Expected getDbRestriction() to throw"
         );
-        assertTrue(e.getMessage().contains("Not supported id of restriction ' '"));
+        assertTrue(e.getData().get(0).contains(" "));
     }
 
     @DisplayName("Property get DB Restriction test")
     @Test
-    void getDbRestrictionTest() throws Exception {
+    void getDbRestrictionTest() throws BadRequestException {
         assertEquals(p.getDbRestriction(null), null);
         assertEquals(p.getDbRestriction("some"), SOME_DB);
         assertEquals(p.getDbRestriction("only"), ONLY_DB);
@@ -104,12 +108,12 @@ public class PropertyValidatorTest {
     @DisplayName("Property get DB Restriction test, thrown exception")
     @Test
     void getRestrictionExceptionTest() {
-        Exception e = assertThrows(
-                Exception.class,
+        BadRequestException e = assertThrows(
+                BadRequestException.class,
                 () -> p.getDbRestriction(" "),
                 "Expected getDbRestriction() to throw"
         );
-        assertTrue(e.getMessage().contains("Not supported id of restriction ' '"));
+        assertTrue(e.getErrorList().get(0).getData().get(0).contains(" "));
     }
 
 }

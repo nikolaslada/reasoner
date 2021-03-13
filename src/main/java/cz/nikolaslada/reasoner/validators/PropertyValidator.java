@@ -3,9 +3,12 @@ package cz.nikolaslada.reasoner.validators;
 import static cz.nikolaslada.reasoner.repository.identifiers.RestrictionId.*;
 import static cz.nikolaslada.reasoner.rest.swagger.identifiers.RestrictionId.*;
 
-import cz.nikolaslada.reasoner.domains.Restriction;
+import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
+import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
+import cz.nikolaslada.reasoner.rest.swagger.exceptions.InternalException;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 @Component
@@ -13,17 +16,21 @@ public class PropertyValidator {
 
     private static final String NAME_ŔEGEX = "^[a-z][a-zA-Z0-9_-]*$";
     private static final Pattern NAME_PATTERN = Pattern.compile(NAME_ŔEGEX);
-    private static final int NAME_MAX_LENGTH = 255;
+    private static final Integer NAME_MAX_LENGTH = 255;
 
-    public boolean isNameValid(String name) throws Exception {
+    public boolean isNameValid(String name) throws BadRequestException {
         Integer length = name.length();
 
         if (length > NAME_MAX_LENGTH) {
-            throw new Exception(
-                    String.format(
-                            "Length of property name must not be greater than %d! Current length is %d",
-                            NAME_MAX_LENGTH,
-                            length
+            throw new BadRequestException(
+                    Arrays.asList(
+                            new ErrorItem(
+                                    "Length of property name must not be greater than %d! Current length is %d",
+                                    Arrays.asList(
+                                            NAME_MAX_LENGTH.toString(),
+                                            length.toString()
+                                    )
+                            )
                     )
             );
         }
@@ -31,7 +38,7 @@ public class PropertyValidator {
         return NAME_PATTERN.matcher(name).matches();
     }
 
-    public String getDbRestriction(String id) throws Exception {
+    public String getDbRestriction(String id) throws BadRequestException {
         if (id == null) {
             return null;
         }
@@ -50,16 +57,24 @@ public class PropertyValidator {
             case EQUAL_API:
                 return EQUAL_DB;
             default:
-                throw new Exception(
-                        String.format(
-                                "Not supported id of restriction '%c'.",
-                                id
+                throw new BadRequestException(
+                        Arrays.asList(
+                                new ErrorItem(
+                                        "Not supported id of restriction '%c'.",
+                                        Arrays.asList(
+                                                id
+                                        )
+                                )
                         )
                 );
         }
     }
 
-    public String getApiRestriction(String id) throws Exception {
+    public String getApiRestriction(String id) throws InternalException {
+        if (id == null) {
+            return null;
+        }
+
         switch (id) {
             case SOME_DB:
                 return SOME_API;
@@ -74,7 +89,12 @@ public class PropertyValidator {
             case EQUAL_DB:
                 return EQUAL_API;
             default:
-                return null;
+                throw new InternalException(
+                        "Not supported id of restriction '%c' in database.",
+                        Arrays.asList(
+                                id
+                        )
+                );
         }
     }
 

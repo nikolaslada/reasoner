@@ -39,7 +39,6 @@ public class UserApi {
             return this.service.getByLogin(value);
         } else {
             throw new BadRequestException(
-                    BAD_REQUEST_UNSUPPORTED_BY_MESSAGE,
                     Arrays.asList(
                             new ErrorItem(
                                     BAD_REQUEST_UNSUPPORTED_BY_MESSAGE,

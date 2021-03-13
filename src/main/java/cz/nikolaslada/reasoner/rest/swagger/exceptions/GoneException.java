@@ -1,13 +1,18 @@
 package cz.nikolaslada.reasoner.rest.swagger.exceptions;
 
-import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
-
 import java.util.List;
+import lombok.Getter;
 
+@Getter
 public class GoneException extends ErrorException {
 
-    public GoneException(String message, List<ErrorItem> errorList) {
-        super(message, errorList);
+    private final String message;
+    private final List<String> data;
+
+
+    public GoneException(String message, List<String> data) {
+        this.message = message;
+        this.data = data;
     }
 
 }

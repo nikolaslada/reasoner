@@ -6,7 +6,6 @@ import cz.nikolaslada.reasoner.factories.SharedFactory;
 import cz.nikolaslada.reasoner.repository.ClassNodeRepository;
 import cz.nikolaslada.reasoner.repository.model.ClassNodeModel;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewClassDomain;
-import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -49,12 +48,7 @@ public class ClassNodeService {
             throw new NotFoundException(
                     NOT_FOUND_MESSAGE,
                     Arrays.asList(
-                            new ErrorItem(
-                                    NOT_FOUND_MESSAGE,
-                                    Arrays.asList(
-                                            id.toString()
-                                    )
-                            )
+                            id.toString()
                     )
             );
         } else {
@@ -62,17 +56,12 @@ public class ClassNodeService {
         }
     }
 
-    public ClassNodeModel create(NewClassDomain request) throws Exception {
+    public ClassNodeModel create(NewClassDomain request) throws ConflictException {
         if (this.classNodeRepository.existsByName(request.getName())) {
             throw new ConflictException(
                     CONFLICT_MESSAGE,
                     Arrays.asList(
-                            new ErrorItem(
-                                    CONFLICT_MESSAGE,
-                                    Arrays.asList(
-                                            request.getName()
-                                    )
-                            )
+                            request.getName()
                     )
             );
         }

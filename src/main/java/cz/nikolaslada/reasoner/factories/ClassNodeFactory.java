@@ -8,11 +8,15 @@ import cz.nikolaslada.reasoner.repository.model.DefinitionModel;
 import cz.nikolaslada.reasoner.rest.swagger.domains.ConditionDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.DefinitionDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.ClassSetDomain;
+import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
+import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
+import cz.nikolaslada.reasoner.rest.swagger.exceptions.InternalException;
 import cz.nikolaslada.reasoner.validators.ConditionValidator;
 import cz.nikolaslada.reasoner.validators.PropertyValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static cz.nikolaslada.reasoner.repository.identifiers.ConditionTypeId.*;
@@ -30,7 +34,7 @@ public class ClassNodeFactory {
         this.propertyValidator = propertyValidator;
     }
 
-    public ConditionModel createConditionModel(ConditionDomain domain, NameIdPairsDomain nameIdPairs) throws Exception {
+    public ConditionModel createConditionModel(ConditionDomain domain, NameIdPairsDomain nameIdPairs) throws BadRequestException {
         List<ConditionModel> set = new ArrayList<>();
         for (ConditionDomain cD : domain.getSet()) {
             set.add(this.createConditionModel(cD, nameIdPairs));
@@ -78,16 +82,20 @@ public class ClassNodeFactory {
                         null
                 );
             default:
-                throw new Exception(
-                        String.format(
-                                "Not supported id of condition type '%c'.",
-                                domain.getType()
+                throw new BadRequestException(
+                        Arrays.asList(
+                                new ErrorItem(
+                                        "Not supported id of condition type '%c'.",
+                                        Arrays.asList(
+                                                domain.getType()
+                                        )
+                                )
                         )
                 );
         }
     }
 
-    public ConditionDomain createConditionDomain(ConditionModel model, IdNamePairsDomain idNamePairs) throws Exception {
+    public ConditionDomain createConditionDomain(ConditionModel model, IdNamePairsDomain idNamePairs) throws InternalException {
         List<ConditionDomain> set = new ArrayList<>();
         for (ConditionModel cM : model.getSet()) {
             set.add(this.createConditionDomain(cM, idNamePairs));
@@ -131,16 +139,16 @@ public class ClassNodeFactory {
                         null
                 );
             default:
-                throw new Exception(
-                        String.format(
-                                "Not supported id of condition type '%c'.",
+                throw new InternalException(
+                        "Not supported id of condition type '%c'.",
+                        Arrays.asList(
                                 model.getType()
                         )
                 );
         }
     }
 
-    public List<DefinitionModel> createDefinitionModelList(List<DefinitionDomain> list, NameIdPairsDomain nameIdPairs) throws Exception {
+    public List<DefinitionModel> createDefinitionModelList(List<DefinitionDomain> list, NameIdPairsDomain nameIdPairs) throws BadRequestException {
         List<DefinitionModel> set = new ArrayList<>();
         for (DefinitionDomain d : list) {
             set.add(this.createDefinitionModel(d, nameIdPairs));
@@ -149,7 +157,7 @@ public class ClassNodeFactory {
         return set;
     }
 
-    public DefinitionModel createDefinitionModel(DefinitionDomain d, NameIdPairsDomain nameIdPairs) throws Exception {
+    public DefinitionModel createDefinitionModel(DefinitionDomain d, NameIdPairsDomain nameIdPairs) throws BadRequestException {
         return new DefinitionModel(
                 d.getClassName() == null ? null : nameIdPairs.getClassIdNameMap().get(d.getClassName()),
                 d.getProperty() == null ? null : nameIdPairs.getPropertyIdNameMap().get(d.getProperty()),
@@ -159,7 +167,7 @@ public class ClassNodeFactory {
         );
     }
 
-    public ClassSetModel createClassSetModel(ClassSetDomain d, NameIdPairsDomain nameIdPairs) throws Exception {
+    public ClassSetModel createClassSetModel(ClassSetDomain d, NameIdPairsDomain nameIdPairs) throws BadRequestException {
         List<ClassSetModel> set = new ArrayList<>();
         for (ClassSetDomain classSet : d.getSet()) {
             set.add(this.createClassSetModel(classSet, nameIdPairs));
@@ -172,7 +180,7 @@ public class ClassNodeFactory {
         );
     }
 
-    public List<DefinitionDomain> createDefinitionDomainList(List<DefinitionModel> list, IdNamePairsDomain idNamePairs) throws Exception {
+    public List<DefinitionDomain> createDefinitionDomainList(List<DefinitionModel> list, IdNamePairsDomain idNamePairs) throws InternalException {
         List<DefinitionDomain> set = new ArrayList<>();
         for (DefinitionModel m : list) {
             set.add(this.createDefinitionDomain(m, idNamePairs));
@@ -181,7 +189,7 @@ public class ClassNodeFactory {
         return set;
     }
 
-    public DefinitionDomain createDefinitionDomain(DefinitionModel m, IdNamePairsDomain idNamePairs) throws Exception {
+    public DefinitionDomain createDefinitionDomain(DefinitionModel m, IdNamePairsDomain idNamePairs) throws InternalException {
         return new DefinitionDomain(
                 idNamePairs.getClassIdNameMap().get(m.getCId()),
                 idNamePairs.getPropertyIdNameMap().get(m.getPId()),
@@ -191,7 +199,7 @@ public class ClassNodeFactory {
         );
     }
 
-    public ClassSetDomain createClassSetDomain(ClassSetModel m, IdNamePairsDomain idNamePairs) throws Exception {
+    public ClassSetDomain createClassSetDomain(ClassSetModel m, IdNamePairsDomain idNamePairs) throws InternalException {
         List<ClassSetDomain> set = new ArrayList<>();
         for (ClassSetModel classSet : m.getSet()) {
             set.add(this.createClassSetDomain(classSet, idNamePairs));

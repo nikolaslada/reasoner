@@ -12,13 +12,11 @@ public class ErrorResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private final LocalDateTime timestamp;
     private final int status;
-    private final String message;
     private final List<ErrorItem> errorList;
 
-    public ErrorResponse(LocalDateTime timestamp, int status, String message, List<ErrorItem> errorList) {
+    public ErrorResponse(LocalDateTime timestamp, int status, List<ErrorItem> errorList) {
         this.timestamp = timestamp;
         this.status = status;
-        this.message = message;
         this.errorList = errorList;
     }
 

@@ -6,7 +6,6 @@ import cz.nikolaslada.reasoner.repository.PropertyRepository;
 import cz.nikolaslada.reasoner.repository.model.Ontology;
 import cz.nikolaslada.reasoner.repository.OntologyRepository;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewOntologyDomain;
-import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
@@ -51,12 +50,7 @@ public class OntologyService {
             throw new NotFoundException(
                     NOT_FOUND_MESSAGE,
                     Arrays.asList(
-                            new ErrorItem(
-                                    NOT_FOUND_MESSAGE,
-                                    Arrays.asList(
-                                            id.toString()
-                                    )
-                            )
+                            id.toString()
                     )
             );
         } else {
@@ -69,12 +63,7 @@ public class OntologyService {
             throw new ConflictException(
                     CONFLICT_MESSAGE_BY_NAME,
                     Arrays.asList(
-                            new ErrorItem(
-                                    CONFLICT_MESSAGE_BY_NAME,
-                                    Arrays.asList(
-                                            request.getName()
-                                    )
-                            )
+                            request.getName()
                     )
             );
         }
@@ -97,12 +86,7 @@ public class OntologyService {
             throw new GoneException(
                     GONE_MESSAGE,
                     Arrays.asList(
-                            new ErrorItem(
-                                    GONE_MESSAGE,
-                                    Arrays.asList(
-                                            id.toString()
-                                    )
-                            )
+                            id.toString()
                     )
             );
         }
@@ -114,12 +98,7 @@ public class OntologyService {
             throw new ConflictException(
                     CONFLICT_MESSAGE_BY_REF,
                     Arrays.asList(
-                            new ErrorItem(
-                                    CONFLICT_MESSAGE_BY_REF,
-                                    Arrays.asList(
-                                            id.toString()
-                                    )
-                            )
+                            id.toString()
                     )
             );
         }

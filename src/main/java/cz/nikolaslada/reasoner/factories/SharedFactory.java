@@ -28,7 +28,6 @@ public class SharedFactory {
     public LinkModel createLinkModel(LinkDomain domain) throws BadRequestException {
         if (!this.validator.isIsoLanguageValid(domain.getIso())) {
             throw new BadRequestException(
-                    IsoValidator.ERROR_MESSAGE_PATTERN,
                     Arrays.asList(
                             new ErrorItem(
                                     IsoValidator.ERROR_MESSAGE_PATTERN,
@@ -71,7 +70,6 @@ public class SharedFactory {
 
         if (!notValidIsoList.isEmpty()) {
             throw new BadRequestException(
-                    IsoValidator.ERROR_MESSAGE_PATTERN,
                     Arrays.asList(
                             new ErrorItem(
                                     IsoValidator.ERROR_MESSAGE_PATTERN,

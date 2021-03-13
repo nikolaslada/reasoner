@@ -4,6 +4,7 @@ import cz.nikolaslada.reasoner.mappers.ClassNodeMapper;
 import cz.nikolaslada.reasoner.repository.model.ClassNodeModel;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewClassDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.response.ClassDetail;
+import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
 import cz.nikolaslada.reasoner.services.ClassNodeService;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class ClassNodeApi {
             produces = { "application/json" },
             consumes = { "application/json" }
     )
-    public ClassDetail post(@RequestBody NewClassDomain newClassDomain) throws Exception {
+    public ClassDetail post(@RequestBody NewClassDomain newClassDomain) throws ConflictException {
         ClassNodeModel classNodeModel = this.service.create(newClassDomain);
         return ClassNodeMapper.INSTANCE.classNodeModelToClassDetail(classNodeModel);
     }

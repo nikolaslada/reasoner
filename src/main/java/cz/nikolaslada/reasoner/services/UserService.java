@@ -6,7 +6,6 @@ import cz.nikolaslada.reasoner.repository.model.User;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewUser;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.UpdateUser;
 import cz.nikolaslada.reasoner.rest.swagger.domains.response.UserDetail;
-import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
@@ -40,12 +39,7 @@ public class UserService {
             throw new NotFoundException(
                     NOT_FOUND_MESSAGE_BY_ID,
                     Arrays.asList(
-                            new ErrorItem(
-                                    NOT_FOUND_MESSAGE_BY_ID,
-                                    Arrays.asList(
-                                            id.toString()
-                                    )
-                            )
+                            id.toString()
                     )
             );
         } else {
@@ -60,12 +54,7 @@ public class UserService {
             throw new NotFoundException(
                     NOT_FOUND_MESSAGE_BY_LOGIN,
                     Arrays.asList(
-                            new ErrorItem(
-                                    NOT_FOUND_MESSAGE_BY_LOGIN,
-                                    Arrays.asList(
-                                            login
-                                    )
-                            )
+                            login
                     )
             );
         } else {
@@ -78,12 +67,7 @@ public class UserService {
             throw new ConflictException(
                     CONFLICT_MESSAGE,
                     Arrays.asList(
-                            new ErrorItem(
-                                    CONFLICT_MESSAGE,
-                                    Arrays.asList(
-                                            request.getLogin()
-                                    )
-                            )
+                            request.getLogin()
                     )
             );
         }
@@ -108,12 +92,7 @@ public class UserService {
             throw new GoneException(
                     GONE_MESSAGE,
                     Arrays.asList(
-                            new ErrorItem(
-                                    GONE_MESSAGE,
-                                    Arrays.asList(
-                                            id.toString()
-                                    )
-                            )
+                            id.toString()
                     )
             );
         } else {
@@ -127,12 +106,7 @@ public class UserService {
             throw new GoneException(
                     GONE_MESSAGE,
                     Arrays.asList(
-                            new ErrorItem(
-                                    GONE_MESSAGE,
-                                    Arrays.asList(
-                                            id.toString()
-                                    )
-                            )
+                            id.toString()
                     )
             );
         }
