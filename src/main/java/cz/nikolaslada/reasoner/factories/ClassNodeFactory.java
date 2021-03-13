@@ -11,7 +11,7 @@ import cz.nikolaslada.reasoner.rest.swagger.domains.request.ClassSetDomain;
 import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.InternalException;
-import cz.nikolaslada.reasoner.validators.ConditionValidator;
+import cz.nikolaslada.reasoner.validators.ClassValidator;
 import cz.nikolaslada.reasoner.validators.PropertyValidator;
 import org.springframework.stereotype.Component;
 
@@ -25,12 +25,12 @@ import static cz.nikolaslada.reasoner.rest.swagger.identifiers.ConditionTypeId.*
 @Component
 public class ClassNodeFactory {
 
-    private final ConditionValidator conditionValidator;
+    private final ClassValidator classValidator;
     private final PropertyValidator propertyValidator;
 
 
-    public ClassNodeFactory(ConditionValidator conditionValidator, PropertyValidator propertyValidator) {
-        this.conditionValidator = conditionValidator;
+    public ClassNodeFactory(ClassValidator classValidator, PropertyValidator propertyValidator) {
+        this.classValidator = classValidator;
         this.propertyValidator = propertyValidator;
     }
 
@@ -44,7 +44,7 @@ public class ClassNodeFactory {
             case SET_API:
                 return new ConditionModel(
                         SET_DB,
-                        this.conditionValidator.getDbOperator(domain.getOp()),
+                        this.classValidator.getDbOperator(domain.getOp()),
                         set,
                         null,
                         null,
@@ -105,7 +105,7 @@ public class ClassNodeFactory {
             case SET_DB:
                 return new ConditionDomain(
                         SET_API,
-                        this.conditionValidator.getApiOperator(model.getOp()),
+                        this.classValidator.getApiOperator(model.getOp()),
                         set,
                         null,
                         null,
@@ -174,7 +174,7 @@ public class ClassNodeFactory {
         }
 
         return new ClassSetModel(
-                this.conditionValidator.getDbOperator(d.getOp()),
+                this.classValidator.getDbOperator(d.getOp()),
                 set.isEmpty() ? null : set,
                 d.getName() == null ? null : nameIdPairs.getClassIdNameMap().get(d.getName())
         );
@@ -206,7 +206,7 @@ public class ClassNodeFactory {
         }
 
         return new ClassSetDomain(
-                this.conditionValidator.getApiOperator(m.getOp()),
+                this.classValidator.getApiOperator(m.getOp()),
                 set.isEmpty() ? null : set,
                 m.getCId() == null ? null : idNamePairs.getClassIdNameMap().get(m.getCId())
         );
