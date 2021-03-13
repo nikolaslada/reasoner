@@ -8,6 +8,7 @@ import cz.nikolaslada.reasoner.repository.model.DefinitionModel;
 import cz.nikolaslada.reasoner.rest.swagger.domains.ConditionDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.DefinitionDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.ClassSetDomain;
+import cz.nikolaslada.reasoner.rest.swagger.error.BadRequestBuilder;
 import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.InternalException;
@@ -24,6 +25,9 @@ import static cz.nikolaslada.reasoner.rest.swagger.identifiers.ConditionTypeId.*
 
 @Component
 public class ClassNodeFactory {
+
+    public static final String DEFINITION_SET_OP_CLASS = "Set in Definition must not contain null or non-null values for both 'op' and 'class' attributes!";
+    public static final String DEFINITION_SET_OP_SET = "Set in Definition must contain null or non-null values for both 'op' and 'set' attributes!";
 
     private final ClassValidator classValidator;
     private final PropertyValidator propertyValidator;
@@ -162,21 +166,59 @@ public class ClassNodeFactory {
                 d.getClassName() == null ? null : nameIdPairs.getClassIdNameMap().get(d.getClassName()),
                 d.getProperty() == null ? null : nameIdPairs.getPropertyIdNameMap().get(d.getProperty()),
                 this.propertyValidator.getDbRestriction(d.getRestriction()),
-                d.getSet() == null ? null : this.createClassSetModel(d.getSet(), nameIdPairs),
+                d.getSet() == null ? null : this.createClassSetModel(d.getSet(), nameIdPairs, new BadRequestBuilder(), 0),
                 d.getVal()
         );
     }
 
-    public ClassSetModel createClassSetModel(ClassSetDomain d, NameIdPairsDomain nameIdPairs) throws BadRequestException {
-        List<ClassSetModel> set = new ArrayList<>();
-        for (ClassSetDomain classSet : d.getSet()) {
-            set.add(this.createClassSetModel(classSet, nameIdPairs));
+    public ClassSetModel createClassSetModel(
+            ClassSetDomain d,
+            NameIdPairsDomain nameIdPairs,
+            BadRequestBuilder badRequestBuilder,
+            int level
+    ) throws BadRequestException {
+        String dbOp;
+        Integer cId;
+        List<ClassSetModel> set;
+
+        if (d.getOp() == null) {
+            dbOp = null;
+            cId = nameIdPairs.getClassIdNameMap().get(d.getName());
+            set = null;
+
+            if (d.getName() == null) {
+                badRequestBuilder.addErrorItem(DEFINITION_SET_OP_CLASS);
+            }
+
+            if (d.getSet() != null) {
+                badRequestBuilder.addErrorItem(DEFINITION_SET_OP_SET);
+            }
+        } else {
+            dbOp = this.classValidator.getDbOperator(d.getOp());
+            cId = null;
+            set = new ArrayList<>();
+
+            if (d.getName() != null) {
+                badRequestBuilder.addErrorItem(DEFINITION_SET_OP_CLASS, Arrays.asList(d.getOp(), d.getName()));
+            }
+
+            if (d.getSet() == null || d.getSet().isEmpty()) {
+                badRequestBuilder.addErrorItem(DEFINITION_SET_OP_SET);
+            } else {
+                for (ClassSetDomain classSet : d.getSet()) {
+                    set.add(this.createClassSetModel(classSet, nameIdPairs, badRequestBuilder, level + 1));
+                }
+            }
+        }
+
+        if (level == 0 && !badRequestBuilder.isEmpty()) {
+            throw badRequestBuilder.build();
         }
 
         return new ClassSetModel(
-                this.classValidator.getDbOperator(d.getOp()),
-                set.isEmpty() ? null : set,
-                d.getName() == null ? null : nameIdPairs.getClassIdNameMap().get(d.getName())
+                dbOp,
+                set,
+                cId
         );
     }
 
