@@ -67,26 +67,20 @@ public class ClassNodeService {
         }
 
         NameIdPairsDomain nameIdPairs = this.domainService.getNameIdPairs(request.getOntologyId());
-        return this.classNodeRepository.save(
-                new ClassNodeModel(
-                    this.sequenceService.getNewSequence(ClassNodeModel.SEQUENCE_NAME, 1).getSeq(),
-                    request.getOntologyId(),
-                    request.getName(),
-                    // owner
-                    ZonedDateTime.now(ZoneOffset.UTC),
-                    null,
-                    this.sharedFactory.createTranslationModelList(request.getTranslationList()),
-                    this.sharedFactory.createLinkModel(request.getLinkDomain()),
-                    this.classNodeFactory.createDefinitionModelList(
-                            request.getDefinitionList(),
-                            nameIdPairs
-                    ),
-                    this.classNodeFactory.createConditionModel(
-                            request.getCondition(),
-                            nameIdPairs
-                    )
-                )
+        ClassNodeModel classNodeModel = this.classNodeFactory.createClassNodeModel(
+                this.sequenceService.getNewSequence(ClassNodeModel.SEQUENCE_NAME, 1).getSeq(),
+                request.getOntologyId(),
+                request.getName(),
+                // owner
+                ZonedDateTime.now(ZoneOffset.UTC),
+                null,
+                this.sharedFactory.createTranslationModelList(request.getTranslationList()),
+                this.sharedFactory.createLinkModel(request.getLinkDomain()),
+                request.getDefinitionList(),
+                request.getCondition(),
+                nameIdPairs
         );
+        return this.classNodeRepository.save(classNodeModel);
     }
 
 }

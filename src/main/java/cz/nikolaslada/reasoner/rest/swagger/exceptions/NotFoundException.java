@@ -1,9 +1,14 @@
 package cz.nikolaslada.reasoner.rest.swagger.exceptions;
 
 import java.util.List;
-import lombok.Getter;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Builder
 @Getter
+@Setter
 public class NotFoundException extends ErrorException {
 
     private final String message;
