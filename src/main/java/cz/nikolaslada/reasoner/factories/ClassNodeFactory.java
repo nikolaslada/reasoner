@@ -75,16 +75,16 @@ public class ClassNodeFactory {
     }
 
     public ConditionModel createConditionModel(ConditionDomain domain, NameIdPairsDomain nameIdPairs, BadRequestBuilder badRequestBuilder) throws ErrorException {
-        List<ConditionModel> set = new ArrayList<>();
-        if (domain.getSet() != null) {
-            for (ConditionDomain cD : domain.getSet()) {
-                set.add(this.createConditionModel(cD, nameIdPairs, badRequestBuilder));
+        List<ConditionModel> list = new ArrayList<>();
+        if (domain.getList() != null) {
+            for (ConditionDomain cD : domain.getList()) {
+                list.add(this.createConditionModel(cD, nameIdPairs, badRequestBuilder));
             }
         }
 
         switch (domain.getType()) {
             case SET_API:
-                if (set.isEmpty() || domain.getOp() == null || domain.getName() != null || domain.getRestriction() != null || domain.getVal() != null) {
+                if (list.isEmpty() || domain.getSet() != null || domain.getOp() == null || domain.getName() != null || domain.getRestriction() != null || domain.getVal() != null) {
                     throw badRequestBuilder
                             .addErrorItem(CONDITION_SET)
                             .build();
@@ -93,14 +93,15 @@ public class ClassNodeFactory {
                 return new ConditionModel(
                         SET_DB,
                         this.classValidator.getDbOperator(domain.getOp()),
-                        set,
+                        null,
+                        list,
                         null,
                         null,
                         null,
                         null
                 );
             case CLASS_API:
-                if (!set.isEmpty() || domain.getOp() != null || domain.getName() == null || domain.getRestriction() != null || domain.getVal() != null) {
+                if (!list.isEmpty() || domain.getSet() != null || domain.getOp() != null || domain.getName() == null || domain.getRestriction() != null || domain.getVal() != null) {
                     throw badRequestBuilder
                             .addErrorItem(CONDITION_CLASS)
                             .build();
@@ -118,7 +119,8 @@ public class ClassNodeFactory {
                 return new ConditionModel(
                         CLASS_DB,
                         null,
-                        set,
+                        null,
+                        list,
                         classId,
                         null,
                         null,
@@ -128,14 +130,15 @@ public class ClassNodeFactory {
                 String dbRestrict = this.propertyValidator.getDbRestriction(domain.getRestriction());
                 if (
                         domain.getOp() != null
+                        || !list.isEmpty()
                         || domain.getName() == null
                         || (
                                 this.propertyValidator.isDbRestrictionForClass(dbRestrict)
-                                && (set.isEmpty() || domain.getVal() != null)
+                                && (domain.getSet() == null || domain.getVal() != null)
                         )
                         || (
                                 this.propertyValidator.isDbRestrictionForValue(dbRestrict)
-                                && (!set.isEmpty() || domain.getVal() == null)
+                                && (domain.getSet() != null || domain.getVal() == null)
                         )
                 ) {
                     throw badRequestBuilder
@@ -155,14 +158,15 @@ public class ClassNodeFactory {
                 return new ConditionModel(
                         PROPERTY_DB,
                         null,
-                        set,
+                        domain.getSet() == null ? null : this.createConditionModel(domain.getSet(), nameIdPairs, badRequestBuilder),
+                        list,
                         null,
                         propertyId,
                         dbRestrict,
                         domain.getVal()
                 );
             case TYPE_NOT_API:
-                if (set.isEmpty() || domain.getOp() != null || domain.getName() != null || domain.getRestriction() != null || domain.getVal() != null) {
+                if (!list.isEmpty() || domain.getSet() == null || domain.getOp() != null || domain.getName() != null || domain.getRestriction() != null || domain.getVal() != null) {
                     throw badRequestBuilder
                             .addErrorItem(CONDITION_NOT)
                             .build();
@@ -171,7 +175,8 @@ public class ClassNodeFactory {
                 return new ConditionModel(
                         TYPE_NOT_DB,
                         null,
-                        set,
+                        this.createConditionModel(domain.getSet(), nameIdPairs, badRequestBuilder),
+                        list,
                         null,
                         null,
                         null,
@@ -185,9 +190,9 @@ public class ClassNodeFactory {
     }
 
     public ConditionDomain createConditionDomain(ConditionModel model, IdNamePairsDomain idNamePairs) throws InternalException {
-        List<ConditionDomain> set = new ArrayList<>();
-        for (ConditionModel cM : model.getSet()) {
-            set.add(this.createConditionDomain(cM, idNamePairs));
+        List<ConditionDomain> list = new ArrayList<>();
+        for (ConditionModel cM : model.getList()) {
+            list.add(this.createConditionDomain(cM, idNamePairs));
         }
 
         switch (model.getType()) {
@@ -195,7 +200,8 @@ public class ClassNodeFactory {
                 return new ConditionDomain(
                         SET_API,
                         this.classValidator.getApiOperator(model.getOp()),
-                        set,
+                        null,
+                        list,
                         null,
                         null,
                         null
@@ -203,6 +209,7 @@ public class ClassNodeFactory {
             case CLASS_DB:
                 return new ConditionDomain(
                         CLASS_API,
+                        null,
                         null,
                         null,
                         idNamePairs.getClassIdNameMap().get(model.getClassId()),
@@ -213,7 +220,8 @@ public class ClassNodeFactory {
                 return new ConditionDomain(
                         PROPERTY_API,
                         null,
-                        set.isEmpty() ? null : set,
+                        model.getSet() == null ? null : this.createConditionDomain(model.getSet(), idNamePairs),
+                        null,
                         idNamePairs.getPropertyIdNameMap().get(model.getPropertyId()),
                         this.propertyValidator.getApiRestriction(model.getRestrict()),
                         model.getVal()
@@ -222,7 +230,8 @@ public class ClassNodeFactory {
                 return new ConditionDomain(
                         TYPE_NOT_API,
                         null,
-                        set,
+                        this.createConditionDomain(model.getSet(), idNamePairs),
+                        null,
                         null,
                         null,
                         null

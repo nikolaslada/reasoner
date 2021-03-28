@@ -8,7 +8,8 @@ public class ConditionDomain {
 
     private final String type;
     private final String op;
-    private final List<ConditionDomain> set;
+    private final ConditionDomain set;
+    private final List<ConditionDomain> list;
     private final String name;
     private final String restriction;
     private final Integer val;
@@ -17,7 +18,8 @@ public class ConditionDomain {
     public ConditionDomain(
             String type,
             String op,
-            List<ConditionDomain> set,
+            ConditionDomain set,
+            List<ConditionDomain> list,
             String name,
             String restriction,
             Integer val
@@ -26,6 +28,7 @@ public class ConditionDomain {
         this.type = type;
         this.op = op;
         this.set = set;
+        this.list = list;
         this.name = name;
         this.restriction = restriction;
         this.val = val;

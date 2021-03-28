@@ -13,7 +13,9 @@ public class ConditionModel {
     @Nullable
     private final String op;
     @Nullable
-    private final List<ConditionModel> set;
+    private final ConditionModel set;
+    @Nullable
+    private final List<ConditionModel> list;
     @DBRef
     @Nullable
     private final Integer classId;
@@ -29,7 +31,8 @@ public class ConditionModel {
     public ConditionModel(
             String type,
             @Nullable String op,
-            @Nullable List<ConditionModel> set,
+            @Nullable ConditionModel set,
+            @Nullable List<ConditionModel> list,
             @Nullable Integer classId,
             @Nullable Integer propertyId,
             @Nullable String restrict,
@@ -38,6 +41,7 @@ public class ConditionModel {
         this.type = type;
         this.op = op;
         this.set = set;
+        this.list = list;
         this.classId = classId;
         this.propertyId = propertyId;
         this.restrict = restrict;

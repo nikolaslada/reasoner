@@ -279,7 +279,7 @@ public class ClassNodeFactoryTest {
 
     @DisplayName("Create of ConditionModel test")
     @Test
-    void createTest() {
+    void createConditionModelTest() {
         HashMap<String, Integer> classNameIdMap = new HashMap<>();
         HashMap<String, Integer> propertyNameIdMap = new HashMap<>();
         classNameIdMap.put("TestClassA", 1);
@@ -294,9 +294,11 @@ public class ClassNodeFactoryTest {
         ConditionDomain d1 = new ConditionDomain(
                 "set",
                 "and",
+                null,
                 Arrays.asList(
                         new ConditionDomain(
                                 "class",
+                                null,
                                 null,
                                 null,
                                 "TestClassA",
@@ -306,16 +308,26 @@ public class ClassNodeFactoryTest {
                         new ConditionDomain(
                                 "property",
                                 null,
-                                Arrays.asList(
-                                        new ConditionDomain(
-                                                "class",
-                                                null,
-                                                null,
-                                                "TestClassB",
-                                                null,
-                                                null
-                                        )
+                                new ConditionDomain(
+                                        "set",
+                                        "and",
+                                        null,
+                                        Arrays.asList(
+                                                new ConditionDomain(
+                                                        "class",
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        "TestClassB",
+                                                        null,
+                                                        null
+                                                )
+                                        ),
+                                        null,
+                                        null,
+                                        null
                                 ),
+                                null,
                                 "hasValueA",
                                 "some",
                                 null
@@ -323,48 +335,50 @@ public class ClassNodeFactoryTest {
                         new ConditionDomain(
                                 "property",
                                 null,
-                                Arrays.asList(
-                                        new ConditionDomain(
-                                                "set",
-                                                "and",
-                                                Arrays.asList(
+                                new ConditionDomain(
+                                        "set",
+                                        "and",
+                                        null,
+                                        Arrays.asList(
+                                                new ConditionDomain(
+                                                        "class",
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        "TestClassC",
+                                                        null,
+                                                        null
+                                                ),
+                                                new ConditionDomain(
+                                                        "not",
+                                                        null,
                                                         new ConditionDomain(
                                                                 "class",
                                                                 null,
                                                                 null,
-                                                                "TestClassC",
+                                                                null,
+                                                                "TestClassD",
                                                                 null,
                                                                 null
                                                         ),
-                                                        new ConditionDomain(
-                                                                "not",
-                                                                null,
-                                                                Arrays.asList(
-                                                                        new ConditionDomain(
-                                                                                "class",
-                                                                                null,
-                                                                                null,
-                                                                                "TestClassD",
-                                                                                null,
-                                                                                null
-                                                                        )
-                                                                ),
-                                                                null,
-                                                                null,
-                                                                null
-                                                        )
-                                                ),
-                                                null,
-                                                null,
-                                                null
-                                        )
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null
+                                                )
+                                        ),
+                                        null,
+                                        null,
+                                        null
                                 ),
+                                null,
                                 "hasValueB",
                                 "only",
                                 null
                         ),
                         new ConditionDomain(
                                 "property",
+                                null,
                                 null,
                                 null,
                                 "hasValueC",
@@ -384,20 +398,22 @@ public class ClassNodeFactoryTest {
 
         assertEquals("s", m1.getType());
         assertEquals("a", m1.getOp());
-        assertEquals(4, m1.getSet().size());
+        assertEquals(null, m1.getSet());
+        assertEquals(4, m1.getList().size());
         assertEquals(null, m1.getClassId());
         assertEquals(null, m1.getPropertyId());
         assertEquals(null, m1.getRestrict());
         assertEquals(null, m1.getVal());
 
-        ConditionModel m1a = m1.getSet().get(0);
-        ConditionModel m1b = m1.getSet().get(1);
-        ConditionModel m1c = m1.getSet().get(2);
-        ConditionModel m1d = m1.getSet().get(3);
+        ConditionModel m1a = m1.getList().get(0);
+        ConditionModel m1b = m1.getList().get(1);
+        ConditionModel m1c = m1.getList().get(2);
+        ConditionModel m1d = m1.getList().get(3);
 
         assertEquals("c", m1a.getType());
         assertEquals(null, m1a.getOp());
-        assertEquals(0, m1a.getSet().size());
+        assertEquals(null, m1a.getSet());
+        assertEquals(0, m1a.getList().size());
         assertEquals(1, m1a.getClassId());
         assertEquals(null, m1a.getPropertyId());
         assertEquals(null, m1a.getRestrict());
@@ -405,46 +421,60 @@ public class ClassNodeFactoryTest {
 
         assertEquals("p", m1b.getType());
         assertEquals(null, m1b.getOp());
-        assertEquals(1, m1b.getSet().size());
+        assertEquals(0, m1b.getList().size());
         assertEquals(null, m1b.getClassId());
         assertEquals(13, m1b.getPropertyId());
         assertEquals("s", m1b.getRestrict());
         assertEquals(null, m1b.getVal());
 
-        ConditionModel m1b1 = m1b.getSet().get(0);
+        ConditionModel m1b1 = m1b.getSet();
 
-        assertEquals("c", m1b1.getType());
-        assertEquals(null, m1b1.getOp());
-        assertEquals(0, m1b1.getSet().size());
-        assertEquals(22, m1b1.getClassId());
+        assertEquals("s", m1b1.getType());
+        assertEquals("a", m1b1.getOp());
+        assertEquals(null, m1b1.getSet());
+        assertEquals(1, m1b1.getList().size());
+        assertEquals(null, m1b1.getClassId());
         assertEquals(null, m1b1.getPropertyId());
         assertEquals(null, m1b1.getRestrict());
         assertEquals(null, m1b1.getVal());
 
+        ConditionModel m1b1a = m1b1.getList().get(0);
+
+        assertEquals("c", m1b1a.getType());
+        assertEquals(null, m1b1a.getOp());
+        assertEquals(null, m1b1a.getSet());
+        assertEquals(0, m1b1a.getList().size());
+        assertEquals(22, m1b1a.getClassId());
+        assertEquals(null, m1b1a.getPropertyId());
+        assertEquals(null, m1b1a.getRestrict());
+        assertEquals(null, m1b1a.getVal());
+
         assertEquals("p", m1c.getType());
         assertEquals(null, m1c.getOp());
-        assertEquals(1, m1c.getSet().size());
+        assertEquals(0, m1c.getList().size());
         assertEquals(null, m1c.getClassId());
         assertEquals(17, m1c.getPropertyId());
         assertEquals("o", m1c.getRestrict());
         assertEquals(null, m1c.getVal());
 
-        ConditionModel m1c1 = m1c.getSet().get(0);
+        ConditionModel m1c1 = m1c.getSet();
 
         assertEquals("s", m1c1.getType());
         assertEquals("a", m1c1.getOp());
-        assertEquals(2, m1c1.getSet().size());
+        assertEquals(null, m1c1.getSet());
+        assertEquals(2, m1c1.getList().size());
         assertEquals(null, m1c1.getClassId());
         assertEquals(null, m1c1.getPropertyId());
         assertEquals(null, m1c1.getRestrict());
         assertEquals(null, m1c1.getVal());
 
-        ConditionModel m1c1a = m1c1.getSet().get(0);
-        ConditionModel m1c1b = m1c1.getSet().get(1);
+        ConditionModel m1c1a = m1c1.getList().get(0);
+        ConditionModel m1c1b = m1c1.getList().get(1);
 
         assertEquals("c", m1c1a.getType());
         assertEquals(null, m1c1a.getOp());
-        assertEquals(0, m1c1a.getSet().size());
+        assertEquals(null, m1c1a.getSet());
+        assertEquals(0, m1c1a.getList().size());
         assertEquals(333, m1c1a.getClassId());
         assertEquals(null, m1c1a.getPropertyId());
         assertEquals(null, m1c1a.getRestrict());
@@ -452,17 +482,18 @@ public class ClassNodeFactoryTest {
 
         assertEquals("n", m1c1b.getType());
         assertEquals(null, m1c1b.getOp());
-        assertEquals(1, m1c1b.getSet().size());
+        assertEquals(0, m1c1b.getList().size());
         assertEquals(null, m1c1b.getClassId());
         assertEquals(null, m1c1b.getPropertyId());
         assertEquals(null, m1c1b.getRestrict());
         assertEquals(null, m1c1b.getVal());
 
-        ConditionModel m1c1b1 = m1c1b.getSet().get(0);
+        ConditionModel m1c1b1 = m1c1b.getSet();
 
         assertEquals("c", m1c1b1.getType());
         assertEquals(null, m1c1b1.getOp());
-        assertEquals(0, m1c1b1.getSet().size());
+        assertEquals(null, m1c1b1.getSet());
+        assertEquals(0, m1c1b1.getList().size());
         assertEquals(4444, m1c1b1.getClassId());
         assertEquals(null, m1c1b1.getPropertyId());
         assertEquals(null, m1c1b1.getRestrict());
@@ -470,7 +501,8 @@ public class ClassNodeFactoryTest {
 
         assertEquals("p", m1d.getType());
         assertEquals(null, m1d.getOp());
-        assertEquals(0, m1d.getSet().size());
+        assertEquals(null, m1d.getSet());
+        assertEquals(0, m1d.getList().size());
         assertEquals(null, m1d.getClassId());
         assertEquals(18, m1d.getPropertyId());
         assertEquals("i", m1d.getRestrict());
@@ -488,9 +520,11 @@ public class ClassNodeFactoryTest {
         ConditionDomain d1 = new ConditionDomain(
                 "set",
                 null,
+                null,
                 Arrays.asList(
                         new ConditionDomain(
                                 "class",
+                                null,
                                 null,
                                 null,
                                 "TestClassA",
@@ -518,6 +552,7 @@ public class ClassNodeFactoryTest {
                 null,
                 null,
                 null,
+                null,
                 null
         );
 
@@ -533,9 +568,11 @@ public class ClassNodeFactoryTest {
         ConditionDomain d3 = new ConditionDomain(
                 "set",
                 "and",
+                null,
                 Arrays.asList(
                         new ConditionDomain(
                                 "class",
+                                null,
                                 null,
                                 null,
                                 "TestClassA",
@@ -560,9 +597,11 @@ public class ClassNodeFactoryTest {
         ConditionDomain d4 = new ConditionDomain(
                 "set",
                 "and",
+                null,
                 Arrays.asList(
                         new ConditionDomain(
                                 "class",
+                                null,
                                 null,
                                 null,
                                 "TestClassA",
@@ -587,9 +626,11 @@ public class ClassNodeFactoryTest {
         ConditionDomain d5 = new ConditionDomain(
                 "set",
                 "and",
+                null,
                 Arrays.asList(
                         new ConditionDomain(
                                 "class",
+                                null,
                                 null,
                                 null,
                                 "TestClassA",
@@ -625,6 +666,7 @@ public class ClassNodeFactoryTest {
                 "class",
                 "and",
                 null,
+                null,
                 "TestClassA",
                 null,
                 null
@@ -642,16 +684,16 @@ public class ClassNodeFactoryTest {
         ConditionDomain d2 = new ConditionDomain(
                 "class",
                 null,
-                Arrays.asList(
-                        new ConditionDomain(
-                                "class",
-                                null,
-                                null,
-                                "TestClassA",
-                                null,
-                                null
-                        )
+                new ConditionDomain(
+                        "class",
+                        null,
+                        null,
+                        null,
+                        "TestClassA",
+                        null,
+                        null
                 ),
+                null,
                 "TestClassA",
                 null,
                 null
@@ -672,6 +714,7 @@ public class ClassNodeFactoryTest {
                 null,
                 null,
                 null,
+                null,
                 null
         );
 
@@ -688,6 +731,7 @@ public class ClassNodeFactoryTest {
                 "class",
                 null,
                 null,
+                null,
                 "unknown",
                 null,
                 null
@@ -701,6 +745,7 @@ public class ClassNodeFactoryTest {
 
         ConditionDomain d5 = new ConditionDomain(
                 "class",
+                null,
                 null,
                 null,
                 "TestClassA",
@@ -719,6 +764,7 @@ public class ClassNodeFactoryTest {
 
         ConditionDomain d6 = new ConditionDomain(
                 "class",
+                null,
                 null,
                 null,
                 "TestClassA",
@@ -749,6 +795,7 @@ public class ClassNodeFactoryTest {
                 "property",
                 "and",
                 null,
+                null,
                 "hasValueA",
                 "min",
                 3
@@ -766,16 +813,26 @@ public class ClassNodeFactoryTest {
         ConditionDomain d2 = new ConditionDomain(
                 "property",
                 null,
-                Arrays.asList(
-                        new ConditionDomain(
-                                "class",
-                                null,
-                                null,
-                                "TestClassA",
-                                null,
-                                null
-                        )
+                new ConditionDomain(
+                        "set",
+                        "and",
+                        null,
+                        Arrays.asList(
+                                new ConditionDomain(
+                                        "class",
+                                        null,
+                                        null,
+                                        null,
+                                        "TestClassA",
+                                        null,
+                                        null
+                                )
+                        ),
+                        null,
+                        null,
+                        null
                 ),
+                null,
                 "unknown",
                 "only",
                 null
@@ -791,16 +848,26 @@ public class ClassNodeFactoryTest {
         ConditionDomain d3 = new ConditionDomain(
                 "property",
                 null,
-                Arrays.asList(
-                        new ConditionDomain(
-                                "class",
-                                null,
-                                null,
-                                "TestClassA",
-                                null,
-                                null
-                        )
+                new ConditionDomain(
+                        "set",
+                        "and",
+                        null,
+                        Arrays.asList(
+                                new ConditionDomain(
+                                        "class",
+                                        null,
+                                        null,
+                                        null,
+                                        "TestClassA",
+                                        null,
+                                        null
+                                )
+                        ),
+                        null,
+                        null,
+                        null
                 ),
+                null,
                 "hasValueA",
                 "only",
                 4
@@ -826,16 +893,16 @@ public class ClassNodeFactoryTest {
         ConditionDomain d1 = new ConditionDomain(
                 "not",
                 "and",
-                Arrays.asList(
-                        new ConditionDomain(
-                                "class",
-                                null,
-                                null,
-                                "TestClassA",
-                                null,
-                                null
-                        )
+                new ConditionDomain(
+                        "class",
+                        null,
+                        null,
+                        null,
+                        "TestClassA",
+                        null,
+                        null
                 ),
+                null,
                 null,
                 null,
                 null
@@ -852,6 +919,7 @@ public class ClassNodeFactoryTest {
 
         ConditionDomain d2 = new ConditionDomain(
                 "not",
+                null,
                 null,
                 null,
                 "unknown",
@@ -871,16 +939,16 @@ public class ClassNodeFactoryTest {
         ConditionDomain d3 = new ConditionDomain(
                 "not",
                 null,
-                Arrays.asList(
-                        new ConditionDomain(
-                                "class",
-                                null,
-                                null,
-                                "TestClassA",
-                                null,
-                                null
-                        )
+                new ConditionDomain(
+                        "class",
+                        null,
+                        null,
+                        null,
+                        "TestClassA",
+                        null,
+                        null
                 ),
+                null,
                 "hasValueA",
                 null,
                 null
