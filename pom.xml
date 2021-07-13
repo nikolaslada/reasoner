@@ -10,7 +10,7 @@
     </parent>
     <groupId>cz.nikolaslada</groupId>
     <artifactId>reasoner</artifactId>
-    <version>2.3.4-SNAPSHOT</version>
+    <version>2.4.3</version>
     <name>reasoner</name>
     <description>Reasoner is engine for OntoWeb project. It provides Rest API for back-office application and for client queries.</description>
 
@@ -20,18 +20,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <openapi.version>4.3.1</openapi.version>
-
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mmX</maven.build.timestamp.format>
 
-        <default.generateSupportingFiles>true</default.generateSupportingFiles>
-        <default.generateModelTests>false</default.generateModelTests>
-        <default.generateModelDocumentation>false</default.generateModelDocumentation>
-        <default.generateApiTests>false</default.generateApiTests>
-        <base.package>cz.nikolaslada.reasoner</base.package>
-        <default.generateApiDocumentation>false</default.generateApiDocumentation>
-        <default.templateDirectory>${basedir}/src/main/resources/swagger/swagger-codegen-template-JavaSpring</default.templateDirectory>
         <junit-platform.version>1.6.0</junit-platform.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
@@ -149,45 +140,14 @@
         <!-- SPRINGFOX -->
         <dependency>
             <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>3.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mapstruct</groupId>
-                    <artifactId>mapstruct</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-spring-webmvc</artifactId>
+            <artifactId>springfox-boot-starter</artifactId>
             <version>3.0.0</version>
         </dependency>
+
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-core</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-core</artifactId>
-            <version>2.1.7</version>
-        </dependency>
-        <!-- Please remove after creating mustache for model (by default generated with import from this dependency, which is not used by our implementation) -->
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-models</artifactId>
-            <version>2.1.2</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
@@ -213,7 +173,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <release>${java.version}</release>
                     <source>${java.version}</source>
@@ -235,67 +194,6 @@
                             <version>${lombok-mapstruct-binding.version}</version>
                         </path>
                     </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>${openapi.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <!-- specify the swagger yaml -->
-                            <inputSpec>${basedir}/src/main/resources/swagger/service.yaml</inputSpec>
-                            <!-- target to generate java client code -->
-                            <generatorName>spring</generatorName>
-                            <templateDirectory>${default.templateDirectory}</templateDirectory>
-                            <output>target/generated-sources</output>
-                            <generateApis>true</generateApis>
-                            <generateModels>true</generateModels>
-                            <generateSupportingFiles>${default.generateSupportingFiles}</generateSupportingFiles>
-                            <generateModelTests>${default.generateModelTests}</generateModelTests>
-                            <generateModelDocumentation>${default.generateModelDocumentation}</generateModelDocumentation>
-                            <generateApiTests>${default.generateApiTests}</generateApiTests>
-                            <generateApiDocumentation>${default.generateApiDocumentation}</generateApiDocumentation>
-                            <!-- pass any necessary config options -->
-                            <configOptions>
-                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
-                                <jdk11>true</jdk11>
-                                <library>spring-boot</library>
-                                <interfaceOnly>true</interfaceOnly>
-                                <modelPackage>${base.package}.rest.model</modelPackage>
-                                <apiPackage>${base.package}.rest.api</apiPackage>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>get-the-git-infos</id>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>validate-the-git-infos</id>
-                        <goals>
-                            <goal>validateRevision</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
                 </configuration>
             </plugin>
         </plugins>
