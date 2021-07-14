@@ -9,6 +9,7 @@ import cz.nikolaslada.reasoner.rest.swagger.domains.response.UserDetail;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
@@ -24,12 +25,10 @@ public class UserService {
     private static final String GONE_MESSAGE = "Cannot to remove User. There is no User with ID: ";
 
     private final UserRepository userRepository;
-    private final SequenceService sequenceService;
 
 
-    public UserService(UserRepository userRepository, SequenceService sequenceService) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.sequenceService = sequenceService;
     }
 
     public UserDetail getById(Integer id) throws NotFoundException {
@@ -74,13 +73,12 @@ public class UserService {
 
         User user = this.userRepository.save(
                 new User(
-                        this.sequenceService.getNewSequence(User.SEQUENCE_NAME, 1).getSeq(),
+                        new ObjectId(),
                         request.getLogin(),
                         "",
                         request.getFirstName(),
                         request.getSurname(),
-                        ZonedDateTime.now(ZoneOffset.UTC),
-                        null
+                        ZonedDateTime.now(ZoneOffset.UTC)
                 )
         );
 
@@ -118,7 +116,6 @@ public class UserService {
                         "",
                         (r.getFirstName() == null || r.getFirstName().isEmpty()) ? user.getFirstName() : r.getFirstName(),
                         (r.getSurname() == null || r.getSurname().isEmpty()) ? user.getSurname() : r.getSurname(),
-                        user.getCreatedAt(),
                         ZonedDateTime.now(ZoneOffset.UTC)
                 )
         );
