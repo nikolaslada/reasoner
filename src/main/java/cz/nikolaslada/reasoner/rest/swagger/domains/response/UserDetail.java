@@ -2,18 +2,20 @@ package cz.nikolaslada.reasoner.rest.swagger.domains.response;
 
 import lombok.Getter;
 
+import java.util.Date;
+
 @Getter
 public class UserDetail {
 
-    private final Integer id;
+    private final String id;
     private final String login;
     private final String firstName;
     private final String surname;
-    private final String createdAt;
+    private final Date createdAt;
     private final String updatedAt;
 
 
-    public UserDetail(Integer id, String login, String firstName, String surname, String createdAt, String updatedAt) {
+    public UserDetail(String id, String login, String firstName, String surname, Date createdAt, String updatedAt) {
         this.id = id;
         this.login = login;
         this.firstName = firstName;
