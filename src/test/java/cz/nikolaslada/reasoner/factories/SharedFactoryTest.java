@@ -6,6 +6,7 @@ import cz.nikolaslada.reasoner.rest.swagger.domains.LinkDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.TranslationDomain;
 import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
+import cz.nikolaslada.reasoner.services.ValidatorService;
 import cz.nikolaslada.reasoner.validators.IsoValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SharedFactoryTest {
 
     public IsoValidator i = new IsoValidator();
-    public SharedFactory f = new SharedFactory(i);
+    public ValidatorService validatorService = new ValidatorService();
+    public SharedFactory f = new SharedFactory(i, validatorService);
 
     @DisplayName("Create of LinkModel test")
     @Test

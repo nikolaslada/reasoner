@@ -1,17 +1,22 @@
 package cz.nikolaslada.reasoner.services;
 
 import cz.nikolaslada.reasoner.factories.SharedFactory;
+import cz.nikolaslada.reasoner.mappers.OntologyMapper;
 import cz.nikolaslada.reasoner.repository.ClassNodeRepository;
 import cz.nikolaslada.reasoner.repository.PropertyRepository;
-import cz.nikolaslada.reasoner.repository.model.Ontology;
+import cz.nikolaslada.reasoner.repository.model.OntologyModel;
 import cz.nikolaslada.reasoner.repository.OntologyRepository;
-import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewOntologyDomain;
+import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewOntologyRequest;
+import cz.nikolaslada.reasoner.rest.swagger.domains.response.OntologyResponse;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.ErrorException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 @Service
@@ -43,22 +48,22 @@ public class OntologyService {
         this.sharedFactory = sharedFactory;
     }
 
-    public Ontology getById(Integer id) throws NotFoundException {
-        Ontology ontology = this.ontologyRepository.findById(id);
+    public OntologyModel getById(String id) throws NotFoundException {
+        OntologyModel ontologyModel = this.ontologyRepository.findById(new ObjectId(id));
 
-        if (ontology == null) {
+        if (ontologyModel == null) {
             throw new NotFoundException(
                     NOT_FOUND_MESSAGE,
                     Arrays.asList(
-                            id.toString()
+                            id
                     )
             );
         } else {
-            return ontology;
+            return ontologyModel;
         }
     }
 
-    public Ontology create(NewOntologyDomain request) throws ErrorException {
+    public OntologyResponse create(NewOntologyRequest request) throws ErrorException {
         if (this.ontologyRepository.existsByName(request.getName())) {
             throw new ConflictException(
                     CONFLICT_MESSAGE_BY_NAME,
@@ -68,42 +73,46 @@ public class OntologyService {
             );
         }
 
-        return this.ontologyRepository.save(
-                new Ontology(
-                    this.sequenceService.getNewSequence(Ontology.SEQUENCE_NAME, 1).getSeq(),
+        OntologyModel ontologyModel = this.ontologyRepository.save(
+                new OntologyModel(
+                    new ObjectId(),
                     request.getName(),
                     this.sharedFactory.createTranslationModelList(request.getTranslationList()),
                     // owner
                     null,
                     null,
-                    null
+                    null,
+                    ZonedDateTime.now(ZoneOffset.UTC)
                 )
         );
+
+        return OntologyMapper.INSTANCE.ontologyModelToOntologyDetail(ontologyModel);
     }
 
-    public void delete(Integer id) throws ErrorException {
-        if (!this.ontologyRepository.existsById(id)) {
+    public void delete(String id) throws ErrorException {
+        ObjectId objectId = new ObjectId(id);
+        if (!this.ontologyRepository.existsById(objectId)) {
             throw new GoneException(
                     GONE_MESSAGE,
                     Arrays.asList(
-                            id.toString()
+                            id
                     )
             );
         }
 
         if (
-                this.classNodeRepository.existsByOntologyId(id)
-                || this.propertyRepository.existsByOntologyId(id)
+                this.classNodeRepository.existsByOntologyId(objectId)
+                || this.propertyRepository.existsByOntologyId(objectId)
         ) {
             throw new ConflictException(
                     CONFLICT_MESSAGE_BY_REF,
                     Arrays.asList(
-                            id.toString()
+                            id
                     )
             );
         }
 
-        this.ontologyRepository.deleteById(id);
+        this.ontologyRepository.deleteById(objectId);
     }
 
 }

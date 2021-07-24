@@ -2,6 +2,7 @@ package cz.nikolaslada.reasoner.repository.model;
 
 import com.mongodb.lang.Nullable;
 import lombok.Getter;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
@@ -18,7 +19,7 @@ public class ClassNodeModel {
     @MongoId
     private Integer id;
     @DBRef
-    private Integer ontologyId;
+    private ObjectId ontologyId;
     private String name;
     private ZonedDateTime createdAt;
     @Nullable
@@ -35,7 +36,7 @@ public class ClassNodeModel {
 
     public ClassNodeModel(
             Integer id,
-            Integer ontologyId,
+            ObjectId ontologyId,
             String name,
             ZonedDateTime createdAt,
             ZonedDateTime updatedAt,

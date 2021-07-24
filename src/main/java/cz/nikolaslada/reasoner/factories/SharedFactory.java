@@ -8,6 +8,7 @@ import cz.nikolaslada.reasoner.rest.swagger.domains.LinkDomain;
 import cz.nikolaslada.reasoner.rest.swagger.domains.TranslationDomain;
 import cz.nikolaslada.reasoner.rest.swagger.error.ErrorItem;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.BadRequestException;
+import cz.nikolaslada.reasoner.services.ValidatorService;
 import cz.nikolaslada.reasoner.validators.IsoValidator;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +20,12 @@ import java.util.List;
 public class SharedFactory {
 
     private final IsoValidator validator;
+    private final ValidatorService validatorService;
 
 
-    public SharedFactory(IsoValidator validator) {
+    public SharedFactory(IsoValidator validator, ValidatorService validatorService) {
         this.validator = validator;
+        this.validatorService = validatorService;
     }
 
     public LinkModel createLinkModel(LinkDomain domain) throws BadRequestException {
@@ -59,6 +62,8 @@ public class SharedFactory {
         List<String> notValidIsoList = new ArrayList<>();
 
         for (TranslationDomain d : list) {
+            this.validatorService.validate(d);
+
             if (!this.validator.isIsoLanguageValid(d.getIso())) {
                 notValidIsoList.add(d.getIso());
             }

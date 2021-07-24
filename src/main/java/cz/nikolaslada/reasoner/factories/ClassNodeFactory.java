@@ -13,6 +13,7 @@ import cz.nikolaslada.reasoner.rest.swagger.exceptions.InternalException;
 import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
 import cz.nikolaslada.reasoner.validators.ClassValidator;
 import cz.nikolaslada.reasoner.validators.PropertyValidator;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
@@ -44,7 +45,7 @@ public class ClassNodeFactory {
 
     public ClassNodeModel createClassNodeModel(
             Integer id,
-            Integer ontologyId,
+            ObjectId ontologyId,
             String name,
             ZonedDateTime createdAt,
             ZonedDateTime updatedAt,

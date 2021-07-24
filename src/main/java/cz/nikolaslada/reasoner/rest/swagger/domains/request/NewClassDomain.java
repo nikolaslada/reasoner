@@ -11,7 +11,7 @@ import java.util.List;
 public class NewClassDomain {
 
     private final String name;
-    private final Integer ontologyId;
+    private final String ontologyId;
     private final List<TranslationDomain> translationList;
     private final LinkDomain linkDomain;
     private final List<DefinitionDomain> definitionList;
@@ -20,7 +20,7 @@ public class NewClassDomain {
 
     public NewClassDomain(
             String name,
-            Integer ontologyId,
+            String ontologyId,
             List<TranslationDomain> translationList,
             LinkDomain linkDomain,
             List<DefinitionDomain> definitionList,
