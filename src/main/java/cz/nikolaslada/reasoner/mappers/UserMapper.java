@@ -1,6 +1,6 @@
 package cz.nikolaslada.reasoner.mappers;
 
-import cz.nikolaslada.reasoner.repository.model.User;
+import cz.nikolaslada.reasoner.repository.model.UserModel;
 import cz.nikolaslada.reasoner.rest.swagger.domains.response.UserDetail;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -11,7 +11,7 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    @Mapping(source = "user.id", target = "createdAt")
-    UserDetail userModelToUserDetail(User user);
+    @Mapping(source = "userModel.id", target = "createdAt")
+    UserDetail userModelToUserDetail(UserModel userModel);
 
 }

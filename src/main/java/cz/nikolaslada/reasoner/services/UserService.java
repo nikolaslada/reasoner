@@ -2,7 +2,7 @@ package cz.nikolaslada.reasoner.services;
 
 import cz.nikolaslada.reasoner.mappers.UserMapper;
 import cz.nikolaslada.reasoner.repository.UserRepository;
-import cz.nikolaslada.reasoner.repository.model.User;
+import cz.nikolaslada.reasoner.repository.model.UserModel;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewUser;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.UpdateUser;
 import cz.nikolaslada.reasoner.rest.swagger.domains.response.UserDetail;
@@ -32,9 +32,9 @@ public class UserService {
 
     public UserDetail getById(String id) throws ErrorException {
         try {
-            User user = this.userRepository.findById(new ObjectId(id));
+            UserModel userModel = this.userRepository.findById(new ObjectId(id));
 
-            if (user == null) {
+            if (userModel == null) {
                 throw new NotFoundException(
                         NOT_FOUND_MESSAGE_BY_ID,
                         Arrays.asList(
@@ -42,7 +42,7 @@ public class UserService {
                         )
                 );
             } else {
-                return UserMapper.INSTANCE.userModelToUserDetail(user);
+                return UserMapper.INSTANCE.userModelToUserDetail(userModel);
             }
         } catch (IllegalArgumentException e) {
             throw new BadRequestBuilder()
@@ -52,9 +52,9 @@ public class UserService {
     }
 
     public UserDetail getByLogin(String login) throws NotFoundException {
-        User user = this.userRepository.findByLogin(login);
+        UserModel userModel = this.userRepository.findByLogin(login);
 
-        if (user == null) {
+        if (userModel == null) {
             throw new NotFoundException(
                     NOT_FOUND_MESSAGE_BY_LOGIN,
                     Arrays.asList(
@@ -62,7 +62,7 @@ public class UserService {
                     )
             );
         } else {
-            return UserMapper.INSTANCE.userModelToUserDetail(user);
+            return UserMapper.INSTANCE.userModelToUserDetail(userModel);
         }
     }
 
@@ -76,18 +76,19 @@ public class UserService {
             );
         }
 
-        User user = this.userRepository.save(
-                new User(
+        UserModel userModel = this.userRepository.save(
+                new UserModel(
                         new ObjectId(),
                         request.getLogin(),
                         "",
                         request.getFirstName(),
                         request.getSurname(),
+                        request.getEmail(),
                         ZonedDateTime.now(ZoneOffset.UTC)
                 )
         );
 
-        return UserMapper.INSTANCE.userModelToUserDetail(user);
+        return UserMapper.INSTANCE.userModelToUserDetail(userModel);
     }
 
     public void delete(String id) {
@@ -105,7 +106,7 @@ public class UserService {
     }
 
     public UserDetail patch(String id, UpdateUser r) throws GoneException {
-        User user = this.userRepository.findById(new ObjectId(id));
+        UserModel user = this.userRepository.findById(new ObjectId(id));
         if (user == null) {
             throw new GoneException(
                     GONE_MESSAGE,
@@ -115,13 +116,14 @@ public class UserService {
             );
         }
 
-        User patchedUser = this.userRepository.save(
-                new User(
+        UserModel patchedUser = this.userRepository.save(
+                new UserModel(
                         user.getId(),
                         user.getLogin(),
                         "",
                         (r.getFirstName() == null || r.getFirstName().isEmpty()) ? user.getFirstName() : r.getFirstName(),
                         (r.getSurname() == null || r.getSurname().isEmpty()) ? user.getSurname() : r.getSurname(),
+                        (r.getEmail() == null || r.getEmail().isEmpty()) ? user.getEmail() : r.getEmail(),
                         ZonedDateTime.now(ZoneOffset.UTC)
                 )
         );

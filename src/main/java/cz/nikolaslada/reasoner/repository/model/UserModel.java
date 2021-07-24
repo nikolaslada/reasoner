@@ -9,7 +9,7 @@ import java.time.ZonedDateTime;
 
 @Getter
 @Document(collection = "users")
-public class User {
+public class UserModel {
 
     @MongoId
     private ObjectId id;
@@ -18,15 +18,17 @@ public class User {
     private String hash;
     private String firstName;
     private String surname;
+    private String email;
     private ZonedDateTime updatedAt;
 
 
-    public User(ObjectId id, String login, String hash, String firstName, String surname, ZonedDateTime updatedAt) {
+    public UserModel(ObjectId id, String login, String hash, String firstName, String surname, String email, ZonedDateTime updatedAt) {
         this.id = id;
         this.login = login;
         this.hash = hash;
         this.firstName = firstName;
         this.surname = surname;
+        this.email = email;
         this.updatedAt = updatedAt;
     }
 
