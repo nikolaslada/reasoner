@@ -6,9 +6,8 @@ import cz.nikolaslada.reasoner.repository.model.User;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.NewUser;
 import cz.nikolaslada.reasoner.rest.swagger.domains.request.UpdateUser;
 import cz.nikolaslada.reasoner.rest.swagger.domains.response.UserDetail;
-import cz.nikolaslada.reasoner.rest.swagger.exceptions.ConflictException;
-import cz.nikolaslada.reasoner.rest.swagger.exceptions.GoneException;
-import cz.nikolaslada.reasoner.rest.swagger.exceptions.NotFoundException;
+import cz.nikolaslada.reasoner.rest.swagger.error.BadRequestBuilder;
+import cz.nikolaslada.reasoner.rest.swagger.exceptions.*;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
@@ -31,18 +30,24 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserDetail getById(Integer id) throws NotFoundException {
-        User user = this.userRepository.findById(id);
+    public UserDetail getById(String id) throws ErrorException {
+        try {
+            User user = this.userRepository.findById(new ObjectId(id));
 
-        if (user == null) {
-            throw new NotFoundException(
-                    NOT_FOUND_MESSAGE_BY_ID,
-                    Arrays.asList(
-                            id.toString()
-                    )
-            );
-        } else {
-            return UserMapper.INSTANCE.userModelToUserDetail(user);
+            if (user == null) {
+                throw new NotFoundException(
+                        NOT_FOUND_MESSAGE_BY_ID,
+                        Arrays.asList(
+                                id
+                        )
+                );
+            } else {
+                return UserMapper.INSTANCE.userModelToUserDetail(user);
+            }
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestBuilder()
+                    .addErrorItem(e.getMessage())
+                    .build();
         }
     }
 
@@ -85,26 +90,27 @@ public class UserService {
         return UserMapper.INSTANCE.userModelToUserDetail(user);
     }
 
-    public void delete(Integer id) {
-        if (!this.userRepository.existsById(id)) {
+    public void delete(String id) {
+        ObjectId objectId = new ObjectId(id);
+        if (!this.userRepository.existsById(objectId)) {
             throw new GoneException(
                     GONE_MESSAGE,
                     Arrays.asList(
-                            id.toString()
+                            id
                     )
             );
         } else {
-            this.userRepository.deleteById(id);
+            this.userRepository.deleteById(objectId);
         }
     }
 
-    public UserDetail patch(Integer id, UpdateUser r) throws GoneException {
-        User user = this.userRepository.findById(id);
+    public UserDetail patch(String id, UpdateUser r) throws GoneException {
+        User user = this.userRepository.findById(new ObjectId(id));
         if (user == null) {
             throw new GoneException(
                     GONE_MESSAGE,
                     Arrays.asList(
-                            id.toString()
+                            id
                     )
             );
         }
