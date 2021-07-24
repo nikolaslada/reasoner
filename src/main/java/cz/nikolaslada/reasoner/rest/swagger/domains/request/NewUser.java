@@ -21,7 +21,7 @@ public class NewUser {
     private final String login;
 
     @NotBlank(message = "password cannot be blank")
-    @Size(min = 8, max = 255, message = "password must be between 1 and 255 characters")
+    @Size(min = 8, max = 255, message = "password must be between 8 and 255 characters")
     private final String password;
 
 

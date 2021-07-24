@@ -63,6 +63,7 @@ public class UserApi {
             consumes = { "application/json" }
     )
     public UserDetail patch(@PathVariable String id, @RequestBody UpdateUser request) throws ErrorException {
+        this.validatorService.validate(request);
         return this.service.patch(id, request);
     }
 
